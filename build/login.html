@@ -299,10 +299,8 @@
     </div>
 
     <script>
-             // 根据环境自动选择API地址
-       const API_BASE_URL = window.location.hostname === 'localhost' 
-         ? "http://localhost:8000" 
-         : "https://mtg-ai-backend.onrender.com";
+             // 连接到云端后端API
+       const API_BASE_URL = "https://mtg-ai-backend.onrender.com";
 
       // 显示状态消息
       function showStatus(message, type = "success") {
@@ -321,14 +319,10 @@
       async function getModels(apiKey, provider) {
         try {
           const response = await fetch(`${API_BASE_URL}/api/models`, {
-            method: "POST",
+            method: "GET",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({
-              api_key: apiKey,
-              provider: provider,
-            }),
           });
 
           const result = await response.json();
