@@ -14,25 +14,28 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
           sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: #0a0a0a;
         min-height: 100vh;
         padding: 20px;
+        color: #ffffff;
       }
 
       .container {
         max-width: 1200px;
         margin: 0 auto;
-        background: white;
+        background: #1a1a1a;
         border-radius: 20px;
-        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         overflow: hidden;
+        border: 1px solid #333333;
       }
 
       .header {
-        background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
         color: white;
         padding: 30px;
         text-align: center;
+        border-bottom: 1px solid #333333;
       }
 
       .header h1 {
@@ -81,6 +84,7 @@
 
       .search-section {
         padding: 40px;
+        background: #1a1a1a;
       }
 
       .search-box {
@@ -92,10 +96,22 @@
       .search-input {
         flex: 1;
         padding: 15px 20px;
-        border: 2px solid #e1e8ed;
+        border: 2px solid #374151;
         border-radius: 10px;
         font-size: 16px;
         transition: border-color 0.3s;
+        background: #2d2d2d;
+        color: #ffffff;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        background: #374151;
+      }
+
+      .search-input::placeholder {
+        color: #9ca3af;
       }
 
       .search-input:focus {
@@ -105,7 +121,7 @@
 
       .search-btn {
         padding: 15px 30px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
         color: white;
         border: none;
         border-radius: 10px;
@@ -132,30 +148,34 @@
 
       .lang-btn {
         padding: 8px 16px;
-        border: 2px solid #e1e8ed;
-        background: white;
+        border: 2px solid #374151;
+        background: #2d2d2d;
+        color: #e5e7eb;
         border-radius: 6px;
         cursor: pointer;
         transition: all 0.3s;
       }
 
       .lang-btn.active {
-        background: #667eea;
+        background: #3b82f6;
         color: white;
-        border-color: #667eea;
+        border-color: #3b82f6;
       }
 
       .results-section {
         padding: 0 40px 40px;
+        background: #1a1a1a;
       }
 
       .query-info {
-        background: #f8f9fa;
+        background: #2d2d2d;
+        color: #e5e7eb;
         padding: 15px;
         border-radius: 10px;
         margin-bottom: 20px;
         font-family: monospace;
         font-size: 14px;
+        border: 1px solid #374151;
       }
 
       .cards-grid {
@@ -166,27 +186,28 @@
       }
 
       .card {
-        border: 1px solid #e1e8ed;
+        border: 1px solid #374151;
         border-radius: 15px;
         overflow: hidden;
         transition: transform 0.3s, box-shadow 0.3s;
-        background: white;
+        background: #2d2d2d;
         display: flex;
         flex-direction: column;
       }
 
       .card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        border-color: #4b5563;
       }
 
       .card-image {
         width: 100%;
-        background: #f8f9fa;
+        background: #374151;
         display: flex;
         align-items: center;
         justify-content: center;
-        color: #6c757d;
+        color: #9ca3af;
         position: relative;
         overflow: hidden;
       }
@@ -213,12 +234,12 @@
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 10px;
-        color: #2c3e50;
+        color: #e5e7eb;
         line-height: 1.3;
       }
 
       .card-type {
-        color: #6c757d;
+        color: #9ca3af;
         font-size: 14px;
         margin-bottom: 10px;
         font-style: italic;
@@ -227,7 +248,7 @@
       .card-text {
         font-size: 14px;
         line-height: 1.6;
-        color: #495057;
+        color: #d1d5db;
         flex: 1;
         overflow: hidden;
         display: -webkit-box;
@@ -238,12 +259,12 @@
       .loading {
         text-align: center;
         padding: 40px;
-        color: #6c757d;
+        color: #9ca3af;
       }
 
       .error {
-        background: #f8d7da;
-        color: #721c24;
+        background: #7f1d1d;
+        color: #fecaca;
         padding: 15px;
         border-radius: 10px;
         margin-bottom: 20px;
@@ -252,8 +273,9 @@
       .example-queries {
         margin-top: 20px;
         padding: 20px;
-        background: #f8f9fa;
+        background: #2d2d2d;
         border-radius: 10px;
+        border: 1px solid #374151;
       }
 
       .example-queries h3 {
@@ -357,8 +379,8 @@
   <body>
     <div class="container">
       <div class="header">
-        <h1>🎴 MTG AI 搜索工具</h1>
-        <p>用自然语言搜索万智牌卡牌</p>
+        <h1 id="pageTitle">🎴 MTG AI 搜索工具</h1>
+        <p id="pageSubtitle">用自然语言搜索万智牌卡牌</p>
         <div class="api-status" id="apiStatus" style="display: none">
           <span class="api-badge" id="apiBadge"></span>
         </div>
@@ -386,8 +408,8 @@
         </div>
 
         <div class="example-queries">
-          <h3>💡 搜索示例</h3>
-          <div class="example-list">
+          <h3 id="examplesTitle">💡 搜索示例</h3>
+          <div class="example-list" id="exampleList">
             <div class="example-item" data-query="地落卡组的强力终端">
               地落卡组的强力终端
             </div>
@@ -423,32 +445,110 @@
     </div>
 
     <script>
-             // 根据环境自动选择API地址
-       const API_BASE_URL = window.location.hostname === 'localhost' 
-         ? "http://localhost:8000" 
-         : "https://mtg-ai-backend.onrender.com";
+      // 连接到云端后端API
+      const API_BASE_URL = "https://mtg-ai-backend.onrender.com";
+
+      // 语言配置
+      const translations = {
+        zh: {
+          pageTitle: "🎴 MTG AI 搜索工具",
+          pageSubtitle: "用自然语言搜索万智牌卡牌",
+          searchPlaceholder: "例如：地落卡组的强力终端",
+          searchBtn: "搜索",
+          searchingText: "搜索中...",
+          examplesTitle: "💡 搜索示例",
+          loadingText: "🔍 正在搜索卡牌...",
+          noResultsText: "没有找到匹配的卡牌",
+          errorText: "搜索失败，请重试",
+          settingsBtn: "⚙️ 设置",
+          apiInfoBtn: "ℹ️ API信息",
+          // 搜索示例
+          example1: "地落卡组的强力终端",
+          example2: "绿色的生物卡",
+          example3: "费用在3点以下的瞬间",
+          example4: "力量大于4的红色生物",
+          example5: "神器或结界卡",
+          example6: "稀有度神话的卡牌",
+          example7: "landfall finisher",
+          example8: "red creatures with power 4+",
+        },
+        en: {
+          pageTitle: "🎴 MTG AI Search Tool",
+          pageSubtitle:
+            "Search Magic: The Gathering cards using natural language",
+          searchPlaceholder: "e.g.: landfall finisher",
+          searchBtn: "Search",
+          searchingText: "Searching...",
+          examplesTitle: "💡 Search Examples",
+          loadingText: "🔍 Searching for cards...",
+          noResultsText: "No matching cards found",
+          errorText: "Search failed, please try again",
+          settingsBtn: "⚙️ Settings",
+          apiInfoBtn: "ℹ️ API Info",
+          // 搜索示例
+          example1: "landfall finisher",
+          example2: "green creatures",
+          example3: "instant spells under 3 mana",
+          example4: "red creatures with power 4+",
+          example5: "artifacts or enchantments",
+          example6: "mythic rarity cards",
+          example7: "landfall finisher",
+          example8: "red creatures with power 4+",
+        },
+      };
 
       let currentLanguage = "zh";
       let currentApiKey = null;
       let currentProvider = null;
       let currentModel = null;
 
-      // 语言切换
+      // 语言切换函数
+      function switchLanguage(lang) {
+        currentLanguage = lang;
+
+        // 更新按钮样式
+        document.querySelectorAll(".lang-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.dataset.lang === lang) {
+            btn.classList.add("active");
+          }
+        });
+
+        // 更新页面文本
+        const t = translations[lang];
+        document.getElementById("pageTitle").textContent = t.pageTitle;
+        document.getElementById("pageSubtitle").textContent = t.pageSubtitle;
+        document.getElementById("searchInput").placeholder =
+          t.searchPlaceholder;
+        document.getElementById("searchBtn").textContent = t.searchBtn;
+        document.getElementById("examplesTitle").textContent = t.examplesTitle;
+        document.getElementById("settingsBtn").textContent = t.settingsBtn;
+        document.getElementById("apiInfoBtn").textContent = t.apiInfoBtn;
+
+        // 更新搜索示例
+        const exampleItems = document.querySelectorAll(".example-item");
+        exampleItems[0].textContent = t.example1;
+        exampleItems[0].dataset.query = t.example1;
+        exampleItems[1].textContent = t.example2;
+        exampleItems[1].dataset.query = t.example2;
+        exampleItems[2].textContent = t.example3;
+        exampleItems[2].dataset.query = t.example3;
+        exampleItems[3].textContent = t.example4;
+        exampleItems[3].dataset.query = t.example4;
+        exampleItems[4].textContent = t.example5;
+        exampleItems[4].dataset.query = t.example5;
+        exampleItems[5].textContent = t.example6;
+        exampleItems[5].dataset.query = t.example6;
+        exampleItems[6].textContent = t.example7;
+        exampleItems[6].dataset.query = t.example7;
+        exampleItems[7].textContent = t.example8;
+        exampleItems[7].dataset.query = t.example8;
+      }
+
+      // 语言切换按钮事件
       document.querySelectorAll(".lang-btn").forEach((btn) => {
         btn.addEventListener("click", () => {
-          document
-            .querySelectorAll(".lang-btn")
-            .forEach((b) => b.classList.remove("active"));
-          btn.classList.add("active");
-          currentLanguage = btn.dataset.lang;
-
-          // 更新输入框占位符
-          const input = document.getElementById("searchInput");
-          if (currentLanguage === "zh") {
-            input.placeholder = "例如：地落卡组的强力终端";
-          } else {
-            input.placeholder = "例如：landfall finisher";
-          }
+          switchLanguage(btn.dataset.lang);
         });
       });
 
@@ -484,9 +584,10 @@
 
         // 显示加载状态
         searchBtn.disabled = true;
-        searchBtn.textContent = "搜索中...";
+        const t = translations[currentLanguage];
+        searchBtn.textContent = t.searchingText;
         resultsSection.style.display = "block";
-        cardsGrid.innerHTML = '<div class="loading">🔍 正在搜索卡牌...</div>';
+        cardsGrid.innerHTML = `<div class="loading">${t.loadingText}</div>`;
 
         try {
           const response = await fetch(`${API_BASE_URL}/api/search`, {
@@ -510,21 +611,39 @@
           displayResults(data);
         } catch (error) {
           console.error("Search error:", error);
+          const t = translations[currentLanguage];
           cardsGrid.innerHTML = `
                     <div class="error">
-                        ❌ 搜索失败: ${error.message}
+                        ❌ ${t.errorText}: ${error.message}
                         <br><br>
-                        请检查：
+                        ${
+                          currentLanguage === "zh"
+                            ? "请检查："
+                            : "Please check:"
+                        }
                         <ul style="margin-left: 20px; margin-top: 10px;">
-                            <li>后端服务是否正在运行</li>
-                            <li>API地址是否正确</li>
-                            <li>网络连接是否正常</li>
+                            <li>${
+                              currentLanguage === "zh"
+                                ? "后端服务是否正在运行"
+                                : "Backend service is running"
+                            }</li>
+                            <li>${
+                              currentLanguage === "zh"
+                                ? "API地址是否正确"
+                                : "API address is correct"
+                            }</li>
+                            <li>${
+                              currentLanguage === "zh"
+                                ? "网络连接是否正常"
+                                : "Network connection is normal"
+                            }</li>
                         </ul>
                     </div>
                 `;
         } finally {
           searchBtn.disabled = false;
-          searchBtn.textContent = "搜索";
+          const t = translations[currentLanguage];
+          searchBtn.textContent = t.searchBtn;
         }
       }
 
@@ -533,20 +652,29 @@
         const cardsGrid = document.getElementById("cardsGrid");
 
         // 显示查询信息
+        const t = translations[currentLanguage];
         queryInfo.innerHTML = `
-                 <strong>Scryfall 查询语法:</strong> ${data.scryfall_query}<br>
-                 <strong>找到卡牌数量:</strong> ${data.total_cards}
+                 <strong>${
+                   currentLanguage === "zh"
+                     ? "Scryfall 查询语法:"
+                     : "Scryfall Query:"
+                 }</strong> ${data.scryfall_query}<br>
+                 <strong>${
+                   currentLanguage === "zh" ? "找到卡牌数量:" : "Cards Found:"
+                 }</strong> ${data.total_cards}
                  ${
                    data.api_provider
-                     ? `<br><strong>AI提供商:</strong> ${data.api_provider.toUpperCase()}`
+                     ? `<br><strong>${
+                         currentLanguage === "zh" ? "AI提供商:" : "AI Provider:"
+                       }</strong> ${data.api_provider.toUpperCase()}`
                      : ""
                  }
              `;
 
         // 显示卡牌
         if (data.cards.length === 0) {
-          cardsGrid.innerHTML =
-            '<div class="loading">😕 没有找到匹配的卡牌</div>';
+          const t = translations[currentLanguage];
+          cardsGrid.innerHTML = `<div class="loading">😕 ${t.noResultsText}</div>`;
           return;
         }
 
