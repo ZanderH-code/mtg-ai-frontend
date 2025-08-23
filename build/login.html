@@ -241,8 +241,8 @@
     <div class="login-container">
       <div class="header">
         <div class="language-toggle" style="text-align: right; margin-bottom: 15px;">
-          <button class="lang-btn active" data-lang="zh" style="background: #667eea; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-left: 10px; cursor: pointer;">中文</button>
-          <button class="lang-btn" data-lang="en" style="background: #f8f9fa; color: #6c757d; border: 1px solid #e1e8ed; padding: 8px 16px; border-radius: 6px; margin-left: 10px; cursor: pointer;">English</button>
+          <button class="lang-btn active" data-lang="zh" style="background: #3b82f6; color: white; border: none; padding: 8px 16px; border-radius: 6px; margin-left: 10px; cursor: pointer;">中文</button>
+          <button class="lang-btn" data-lang="en" style="background: #2d2d2d; color: #e5e7eb; border: 1px solid #374151; padding: 8px 16px; border-radius: 6px; margin-left: 10px; cursor: pointer;">English</button>
         </div>
         <h1 id="pageTitle">🔑 API密钥设置</h1>
         <p id="pageSubtitle">配置您的AI服务密钥以获得更好的搜索体验</p>
@@ -383,13 +383,13 @@
           btn.classList.remove('active');
           if (btn.dataset.lang === lang) {
             btn.classList.add('active');
-            btn.style.background = '#667eea';
+            btn.style.background = '#3b82f6';
             btn.style.color = 'white';
             btn.style.border = 'none';
           } else {
-            btn.style.background = '#f8f9fa';
-            btn.style.color = '#6c757d';
-            btn.style.border = '1px solid #e1e8ed';
+            btn.style.background = '#2d2d2d';
+            btn.style.color = '#e5e7eb';
+            btn.style.border = '1px solid #374151';
           }
         });
 
