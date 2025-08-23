@@ -688,7 +688,9 @@
         cardsGrid.innerHTML = data.cards
           .map(
             (card) => `
-                <div class="card" onclick="openScryfallCard('${card.scryfall_uri}')" style="cursor: pointer;">
+                <div class="card" onclick="openScryfallCard('${
+                  card.scryfall_uri
+                }')" style="cursor: pointer;">
                     <div class="card-image">
                         ${
                           card.image_uris
@@ -702,9 +704,6 @@
                         <div class="card-text">${
                           card.oracle_text || "无规则文本"
                         }</div>
-                        <div class="card-link" style="margin-top: 10px; font-size: 12px; color: #3b82f6; text-decoration: underline;">
-                            🔗 ${currentLanguage === "zh" ? "点击查看详情" : "Click to view details"}
-                        </div>
                     </div>
                 </div>
             `
@@ -741,7 +740,7 @@
       // 跳转到Scryfall卡牌页面
       function openScryfallCard(scryfallUri) {
         if (scryfallUri) {
-          window.open(scryfallUri, '_blank');
+          window.open(scryfallUri, "_blank");
         }
       }
 
