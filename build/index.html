@@ -198,7 +198,8 @@
       .card:hover {
         transform: translateY(-5px);
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        border-color: #4b5563;
+        border-color: #3b82f6;
+        background: #374151;
       }
 
       .card-image {
@@ -217,10 +218,12 @@
         height: auto;
         display: block;
         transition: transform 0.3s;
+        border-radius: 8px;
+        object-fit: cover;
       }
 
       .card:hover .card-image img {
-        transform: scale(1.05);
+        transform: scale(1.02);
       }
 
       .card-content {
@@ -685,11 +688,11 @@
         cardsGrid.innerHTML = data.cards
           .map(
             (card) => `
-                <div class="card">
+                <div class="card" onclick="openScryfallCard('${card.scryfall_uri}')" style="cursor: pointer;">
                     <div class="card-image">
                         ${
                           card.image_uris
-                            ? `<img src="${card.image_uris.small}" alt="${card.name}" loading="lazy">`
+                            ? `<img src="${card.image_uris.normal}" alt="${card.name}" loading="lazy" onerror="this.src='${card.image_uris.small}'">`
                             : "🃏 暂无图片"
                         }
                     </div>
@@ -699,6 +702,9 @@
                         <div class="card-text">${
                           card.oracle_text || "无规则文本"
                         }</div>
+                        <div class="card-link" style="margin-top: 10px; font-size: 12px; color: #3b82f6; text-decoration: underline;">
+                            🔗 ${currentLanguage === "zh" ? "点击查看详情" : "Click to view details"}
+                        </div>
                     </div>
                 </div>
             `
@@ -731,6 +737,13 @@
           alert("当前使用演示模式，无需API密钥");
         }
       });
+
+      // 跳转到Scryfall卡牌页面
+      function openScryfallCard(scryfallUri) {
+        if (scryfallUri) {
+          window.open(scryfallUri, '_blank');
+        }
+      }
 
       // 页面加载完成后的初始化
       document.addEventListener("DOMContentLoaded", () => {
