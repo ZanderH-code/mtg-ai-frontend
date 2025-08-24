@@ -758,17 +758,35 @@
         });
 
       // 排序选项变化时重新搜索
-      document.getElementById("sortSelect").addEventListener("change", () => {
-        if (document.getElementById("searchInput").value.trim()) {
-          performSearch();
+      function addSortEventListeners() {
+        const sortSelect = document.getElementById("sortSelect");
+        const orderSelect = document.getElementById("orderSelect");
+        
+        if (sortSelect) {
+          sortSelect.addEventListener("change", () => {
+            console.log("排序方式变化:", sortSelect.value);
+            if (document.getElementById("searchInput").value.trim()) {
+              performSearch();
+            }
+          });
         }
-      });
-
-      document.getElementById("orderSelect").addEventListener("change", () => {
-        if (document.getElementById("searchInput").value.trim()) {
-          performSearch();
+        
+        if (orderSelect) {
+          orderSelect.addEventListener("change", () => {
+            console.log("排序顺序变化:", orderSelect.value);
+            if (document.getElementById("searchInput").value.trim()) {
+              performSearch();
+            }
+          });
         }
-      });
+      }
+      
+      // 确保DOM加载完成后绑定事件
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', addSortEventListeners);
+      } else {
+        addSortEventListeners();
+      }
 
       async function performSearch() {
         const query = document.getElementById("searchInput").value.trim();
