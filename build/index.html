@@ -489,16 +489,20 @@
               <option value="power" data-zh="按力量" data-en="By Power">
                 按力量
               </option>
-                             <option
-                 value="toughness"
-                 data-zh="按防御力"
-                 data-en="By Toughness"
-               >
-                 按防御力
-               </option>
-               <option value="edhrec" data-zh="按EDHRec评分" data-en="By EDHRec Rating">
-                 按EDHRec评分
-               </option>
+              <option
+                value="toughness"
+                data-zh="按防御力"
+                data-en="By Toughness"
+              >
+                按防御力
+              </option>
+              <option
+                value="edhrec"
+                data-zh="按EDHRec评分"
+                data-en="By EDHRec Rating"
+              >
+                按EDHRec评分
+              </option>
 
               <option value="artist" data-zh="按艺术家" data-en="By Artist">
                 按艺术家
@@ -752,6 +756,19 @@
             performSearch();
           }
         });
+
+      // 排序选项变化时重新搜索
+      document.getElementById("sortSelect").addEventListener("change", () => {
+        if (document.getElementById("searchInput").value.trim()) {
+          performSearch();
+        }
+      });
+
+      document.getElementById("orderSelect").addEventListener("change", () => {
+        if (document.getElementById("searchInput").value.trim()) {
+          performSearch();
+        }
+      });
 
       async function performSearch() {
         const query = document.getElementById("searchInput").value.trim();
