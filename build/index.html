@@ -464,23 +464,56 @@
           <div class="sort-group">
             <label for="sortSelect" id="sortLabel">排序方式：</label>
             <select id="sortSelect" class="sort-select">
-              <option value="name" data-zh="按名称" data-en="By Name">按名称</option>
-              <option value="set" data-zh="按系列" data-en="By Set">按系列</option>
-              <option value="released" data-zh="按发布日期" data-en="By Release Date">按发布日期</option>
-              <option value="rarity" data-zh="按稀有度" data-en="By Rarity">按稀有度</option>
-              <option value="color" data-zh="按颜色" data-en="By Color">按颜色</option>
-              <option value="cmc" data-zh="按法力值" data-en="By Mana Value">按法力值</option>
-              <option value="power" data-zh="按力量" data-en="By Power">按力量</option>
-              <option value="toughness" data-zh="按防御力" data-en="By Toughness">按防御力</option>
-              <option value="edhrec" data-zh="按EDHRec评分" data-en="By EDHRec Rating">按EDHRec评分</option>
-              <option value="artist" data-zh="按艺术家" data-en="By Artist">按艺术家</option>
+              <option value="name" data-zh="按名称" data-en="By Name">
+                按名称
+              </option>
+              <option value="set" data-zh="按系列" data-en="By Set">
+                按系列
+              </option>
+              <option
+                value="released"
+                data-zh="按发布日期"
+                data-en="By Release Date"
+              >
+                按发布日期
+              </option>
+              <option value="rarity" data-zh="按稀有度" data-en="By Rarity">
+                按稀有度
+              </option>
+              <option value="color" data-zh="按颜色" data-en="By Color">
+                按颜色
+              </option>
+              <option value="cmc" data-zh="按法力值" data-en="By Mana Value">
+                按法力值
+              </option>
+              <option value="power" data-zh="按力量" data-en="By Power">
+                按力量
+              </option>
+                             <option
+                 value="toughness"
+                 data-zh="按防御力"
+                 data-en="By Toughness"
+               >
+                 按防御力
+               </option>
+               <option value="edhrec" data-zh="按EDHRec评分" data-en="By EDHRec Rating">
+                 按EDHRec评分
+               </option>
+
+              <option value="artist" data-zh="按艺术家" data-en="By Artist">
+                按艺术家
+              </option>
             </select>
           </div>
           <div class="sort-group">
             <label for="orderSelect" id="orderLabel">排序顺序：</label>
             <select id="orderSelect" class="sort-select">
-              <option value="asc" data-zh="升序" data-en="Ascending">升序</option>
-              <option value="desc" data-zh="降序" data-en="Descending">降序</option>
+              <option value="asc" data-zh="升序" data-en="Ascending">
+                升序
+              </option>
+              <option value="desc" data-zh="降序" data-en="Descending">
+                降序
+              </option>
             </select>
           </div>
         </div>
@@ -658,20 +691,20 @@
         document.getElementById("examplesTitle").textContent = t.examplesTitle;
         document.getElementById("settingsBtn").textContent = t.settingsBtn;
         document.getElementById("apiInfoBtn").textContent = t.apiInfoBtn;
-        
+
         // 更新排序选项标签
         document.getElementById("sortLabel").textContent = t.sortLabel;
         document.getElementById("orderLabel").textContent = t.orderLabel;
-        
+
         // 更新排序选项的选项文本
         const sortSelect = document.getElementById("sortSelect");
         const orderSelect = document.getElementById("orderSelect");
-        
-        Array.from(sortSelect.options).forEach(option => {
+
+        Array.from(sortSelect.options).forEach((option) => {
           option.textContent = option.getAttribute(`data-${lang}`);
         });
-        
-        Array.from(orderSelect.options).forEach(option => {
+
+        Array.from(orderSelect.options).forEach((option) => {
           option.textContent = option.getAttribute(`data-${lang}`);
         });
 
