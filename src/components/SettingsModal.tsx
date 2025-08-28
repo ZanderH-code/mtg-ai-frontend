@@ -24,6 +24,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const [models, setModels] = useState<ApiModel[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState<string>("");
+  const [selectedProvider, setSelectedProvider] = useState<string>("aihubmix");
 
   useEffect(() => {
     if (isOpen) {
@@ -38,6 +39,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       if (savedModel) {
         setSelectedModel(savedModel);
       }
+      // Load saved provider from localStorage
+      const savedProvider = localStorage.getItem("mtg_ai_selected_provider");
+      if (savedProvider) {
+        setSelectedProvider(savedProvider);
+      }
     }
   }, [isOpen]);
 
@@ -48,7 +54,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       setModels(modelsData);
       // If no model is selected, select gpt-4o-mini by default
       if (!selectedModel && modelsData.length > 0) {
-        const defaultModel = modelsData.find(model => model.id === "gpt-4o-mini");
+        const defaultModel = modelsData.find(
+          (model) => model.id === "gpt-4o-mini"
+        );
         if (defaultModel) {
           setSelectedModel(defaultModel.id);
         } else {
@@ -94,6 +102,13 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     localStorage.setItem("mtg_ai_selected_model", modelId);
   };
 
+  const handleProviderChange = (provider: string) => {
+    setSelectedProvider(provider);
+    localStorage.setItem("mtg_ai_selected_provider", provider);
+    // 当提供商改变时，重新加载模型列表
+    loadModels();
+  };
+
   const handleSave = () => {
     if (apiKey?.trim()) {
       localStorage.setItem("mtg_ai_api_key", apiKey);
@@ -109,7 +124,9 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     setValidationResult(null);
     localStorage.removeItem("mtg_ai_api_key");
     localStorage.removeItem("mtg_ai_selected_model");
+    localStorage.removeItem("mtg_ai_selected_provider");
     setSelectedModel("");
+    setSelectedProvider("aihubmix");
   };
 
   if (!isOpen) return null;
@@ -203,6 +220,47 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   </span>
                 </div>
               )}
+            </div>
+          </div>
+
+          {/* Provider Selection */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              {language === "zh" ? "API 提供商" : "API Provider"}
+            </h3>
+
+            <div className="space-y-3">
+              <select
+                value={selectedProvider}
+                onChange={(e) => handleProviderChange(e.target.value)}
+                className="input-field"
+              >
+                <option value="aihubmix">AIHubMix (推荐)</option>
+                <option value="openai">OpenAI</option>
+                <option value="anthropic">Anthropic</option>
+                <option value="google">Google</option>
+              </select>
+
+              <div className="p-3 bg-dark-700 border border-dark-600 rounded-lg">
+                <p className="text-sm text-white font-medium">
+                  {language === "zh" ? "提供商说明" : "Provider Info"}:
+                </p>
+                <p className="text-sm text-dark-300">
+                  {selectedProvider === "aihubmix" && (language === "zh" 
+                    ? "AIHubMix 提供多种AI模型，包括OpenAI、Anthropic、Google等"
+                    : "AIHubMix provides multiple AI models including OpenAI, Anthropic, Google, etc.")}
+                  {selectedProvider === "openai" && (language === "zh"
+                    ? "OpenAI 官方API，需要OpenAI API密钥"
+                    : "OpenAI official API, requires OpenAI API key")}
+                  {selectedProvider === "anthropic" && (language === "zh"
+                    ? "Anthropic Claude API，需要Anthropic API密钥"
+                    : "Anthropic Claude API, requires Anthropic API key")}
+                  {selectedProvider === "google" && (language === "zh"
+                    ? "Google Gemini API，需要Google API密钥"
+                    : "Google Gemini API, requires Google API key")}
+                </p>
+              </div>
             </div>
           </div>
 
