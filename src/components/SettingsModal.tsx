@@ -46,9 +46,15 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     try {
       const modelsData = await apiService.getModels();
       setModels(modelsData);
-      // If no model is selected, select the first one
+      // If no model is selected, select gpt-4o-mini by default
       if (!selectedModel && modelsData.length > 0) {
-        setSelectedModel(modelsData[0].id);
+        const defaultModel = modelsData.find(model => model.id === "gpt-4o-mini");
+        if (defaultModel) {
+          setSelectedModel(defaultModel.id);
+        } else {
+          // Fallback to first model if gpt-4o-mini not found
+          setSelectedModel(modelsData[0].id);
+        }
       }
     } catch (error) {
       console.error("Failed to load models:", error);

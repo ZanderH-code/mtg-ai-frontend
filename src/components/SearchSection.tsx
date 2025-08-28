@@ -151,6 +151,11 @@ const SearchSection: React.FC<SearchSectionProps> = ({
           <h3 className="text-lg font-semibold text-white mb-3">
             {language === "zh" ? "搜索示例" : "Search Examples"}:
           </h3>
+          {language === "zh" && (
+            <p className="text-sm text-dark-300 mb-3">
+              💡 <strong>提示</strong>：使用"瞬间"可以搜索即时法术，如"红色瞬间"、"蓝色瞬间"等
+            </p>
+          )}
           <div className="flex flex-wrap gap-2">
             {examples[language].map((example, index) => (
               <button
