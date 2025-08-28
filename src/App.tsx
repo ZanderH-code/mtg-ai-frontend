@@ -86,7 +86,7 @@ function App() {
         sort: sortBy,
         order: sortOrder,
       };
-      console.log("Full request data:", requestData);
+      console.log("Request data (without API key):", requestData);
       const response = await apiService.searchCards(requestData);
 
       setCards(response.cards);

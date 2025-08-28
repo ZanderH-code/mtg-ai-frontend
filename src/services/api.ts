@@ -44,6 +44,13 @@ export const apiService = {
       provider: provider,
     };
 
+    // 记录掩码后的请求数据用于调试
+    const maskedRequest = {
+      ...requestWithKey,
+      api_key: apiKey ? "***" : undefined,
+    };
+    console.log("Sending request to backend:", maskedRequest);
+
     const response = await api.post<SearchResponse>(
       "/api/search",
       requestWithKey
@@ -73,6 +80,7 @@ export const apiService = {
 
   // Validate API key
   async validateApiKey(apiKey: string): Promise<ApiValidationResponse> {
+    console.log("Validating API key:", "***");
     const response = await api.post<ApiValidationResponse>(
       "/api/validate-key",
       {
@@ -92,7 +100,11 @@ export const apiService = {
     const key = getStoredApiKey();
     if (!key) return null;
     if (key.length <= 8) return "*".repeat(key.length);
-    return key.substring(0, 4) + "*".repeat(key.length - 8) + key.substring(key.length - 4);
+    return (
+      key.substring(0, 4) +
+      "*".repeat(key.length - 8) +
+      key.substring(key.length - 4)
+    );
   },
 
   // 获取当前选择的模型
