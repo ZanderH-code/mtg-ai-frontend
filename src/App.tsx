@@ -40,6 +40,10 @@ function App() {
 
   const checkApiKey = () => {
     const hasKey = apiService.hasApiKey();
+    console.log("API Key check:", {
+      hasKey,
+      storedKey: apiService.getApiKey(),
+    });
     setHasApiKey(hasKey);
   };
 
@@ -49,7 +53,8 @@ function App() {
   };
 
   const handleSearch = async () => {
-    const query = searchQuery;
+    console.log("handleSearch called", { searchQuery, hasApiKey });
+    
     if (!hasApiKey) {
       setError(
         language === "zh"
@@ -60,12 +65,21 @@ function App() {
       return;
     }
 
+    if (!searchQuery?.trim()) {
+      setError(
+        language === "zh"
+          ? "请输入搜索内容"
+          : "Please enter search content"
+      );
+      return;
+    }
+
     setIsLoading(true);
     setError("");
 
     try {
       const response = await apiService.searchCards({
-        query,
+        query: searchQuery,
         language,
         sort: sortBy,
         order: sortOrder,
