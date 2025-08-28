@@ -26,8 +26,11 @@ api.interceptors.request.use((config) => {
   if (config.data) {
     const timestamp = Date.now();
     const encryptedData = SimpleEncryption.encrypt(config.data);
-    const signature = SimpleEncryption.generateSignature(config.data, timestamp);
-    
+    const signature = SimpleEncryption.generateSignature(
+      config.data,
+      timestamp
+    );
+
     config.data = {
       encrypted_data: encryptedData,
       timestamp: timestamp,
@@ -87,9 +90,17 @@ export const apiService = {
   },
 
   // Get available models
-  async getModels(): Promise<ApiModel[]> {
-    const response = await api.get<ApiModelsResponse>("/api/models");
-    return response.data.models || [];
+  async getModels(provider?: string): Promise<ApiModel[]> {
+    try {
+      const params = provider ? { provider } : {};
+      const response = await api.get<ApiModelsResponse>("/api/models", {
+        params,
+      });
+      return response.data.models || [];
+    } catch (error) {
+      console.error("Failed to get models:", error);
+      return [];
+    }
   },
 
   // Validate API key

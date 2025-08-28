@@ -50,7 +50,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   const loadModels = async () => {
     setModelsLoading(true);
     try {
-      const modelsData = await apiService.getModels();
+      const modelsData = await apiService.getModels(selectedProvider);
       setModels(modelsData);
       // If no model is selected, select gpt-4o-mini by default
       if (!selectedModel && modelsData.length > 0) {
@@ -247,18 +247,22 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                   {language === "zh" ? "提供商说明" : "Provider Info"}:
                 </p>
                 <p className="text-sm text-dark-300">
-                  {selectedProvider === "aihubmix" && (language === "zh" 
-                    ? "AIHubMix 提供多种AI模型，包括OpenAI、Anthropic、Google等"
-                    : "AIHubMix provides multiple AI models including OpenAI, Anthropic, Google, etc.")}
-                  {selectedProvider === "openai" && (language === "zh"
-                    ? "OpenAI 官方API，需要OpenAI API密钥"
-                    : "OpenAI official API, requires OpenAI API key")}
-                  {selectedProvider === "anthropic" && (language === "zh"
-                    ? "Anthropic Claude API，需要Anthropic API密钥"
-                    : "Anthropic Claude API, requires Anthropic API key")}
-                  {selectedProvider === "google" && (language === "zh"
-                    ? "Google Gemini API，需要Google API密钥"
-                    : "Google Gemini API, requires Google API key")}
+                  {selectedProvider === "aihubmix" &&
+                    (language === "zh"
+                      ? "AIHubMix 提供多种AI模型，包括OpenAI、Anthropic、Google等"
+                      : "AIHubMix provides multiple AI models including OpenAI, Anthropic, Google, etc.")}
+                  {selectedProvider === "openai" &&
+                    (language === "zh"
+                      ? "OpenAI 官方API，需要OpenAI API密钥"
+                      : "OpenAI official API, requires OpenAI API key")}
+                  {selectedProvider === "anthropic" &&
+                    (language === "zh"
+                      ? "Anthropic Claude API，需要Anthropic API密钥"
+                      : "Anthropic Claude API, requires Anthropic API key")}
+                  {selectedProvider === "google" &&
+                    (language === "zh"
+                      ? "Google Gemini API，需要Google API密钥"
+                      : "Google Gemini API, requires Google API key")}
                 </p>
               </div>
             </div>
