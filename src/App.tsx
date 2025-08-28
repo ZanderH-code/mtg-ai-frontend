@@ -42,7 +42,7 @@ function App() {
     const hasKey = apiService.hasApiKey();
     console.log("API Key check:", {
       hasKey,
-      storedKey: apiService.getApiKey(),
+      storedKey: hasKey ? "***" : "None",
     });
     setHasApiKey(hasKey);
   };

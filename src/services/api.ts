@@ -8,7 +8,6 @@ import {
   ApiValidationResponse,
 } from "../types/api";
 
-
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://mtg-ai-backend.onrender.com";
 
@@ -20,8 +19,6 @@ const api = axios.create({
     "X-Client-Version": "1.0.0",
   },
 });
-
-
 
 // 获取存储的API密钥
 const getStoredApiKey = (): string | null => {
@@ -90,9 +87,12 @@ export const apiService = {
     return !!getStoredApiKey();
   },
 
-  // 获取API密钥
+  // 获取API密钥（掩码版本）
   getApiKey(): string | null {
-    return getStoredApiKey();
+    const key = getStoredApiKey();
+    if (!key) return null;
+    if (key.length <= 8) return "*".repeat(key.length);
+    return key.substring(0, 4) + "*".repeat(key.length - 8) + key.substring(key.length - 4);
   },
 
   // 获取当前选择的模型
