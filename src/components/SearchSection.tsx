@@ -42,7 +42,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
     { value: "cmc", label: language === "zh" ? "法术力费用" : "CMC" },
     { value: "power", label: language === "zh" ? "力量" : "Power" },
     { value: "toughness", label: language === "zh" ? "防御力" : "Toughness" },
-    { value: "edhrec", label: "EDHREC" },
+    { value: "popularity", label: language === "zh" ? "流行度" : "Popularity" },
     { value: "artist", label: language === "zh" ? "艺术家" : "Artist" },
   ];
 
