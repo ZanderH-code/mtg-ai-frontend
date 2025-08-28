@@ -25,15 +25,12 @@ const api = axios.create({
 // 请求拦截器 - 加密请求数据
 api.interceptors.request.use((config) => {
   if (config.data) {
-    try {
-      console.log("🔐 开始加密请求数据...");
-      const encryptedPayload = SimpleEncryption.createEncryptedPayload(config.data);
-      config.data = encryptedPayload;
-      console.log("✅ 请求数据加密完成");
-    } catch (error) {
-      console.error("❌ 请求加密失败:", error);
-      // 加密失败时，使用原始数据
-    }
+    console.log("🔐 开始加密请求数据...");
+    const encryptedPayload = SimpleEncryption.createEncryptedPayload(
+      config.data
+    );
+    config.data = encryptedPayload;
+    console.log("✅ 请求数据加密完成");
   }
   return config;
 });
@@ -41,14 +38,9 @@ api.interceptors.request.use((config) => {
 // 响应拦截器 - 解密响应数据
 api.interceptors.response.use((response) => {
   if (response.data && SimpleEncryption.isEncrypted(response.data)) {
-    try {
-      console.log("🔓 开始解密响应数据...");
-      response.data = SimpleEncryption.decrypt(response.data.encrypted_data);
-      console.log("✅ 响应数据解密完成");
-    } catch (error) {
-      console.error("❌ 响应解密失败:", error);
-      // 解密失败时，保持原始数据
-    }
+    console.log("🔓 开始解密响应数据...");
+    response.data = SimpleEncryption.decrypt(response.data.encrypted_data);
+    console.log("✅ 响应数据解密完成");
   }
   return response;
 });

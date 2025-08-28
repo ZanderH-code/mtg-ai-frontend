@@ -50,17 +50,11 @@ export class SimpleEncryption {
   }
 
   static createEncryptedPayload(data: any): any {
-    try {
-      const encryptedData = this.encrypt(data);
-      return {
-        encrypted_data: encryptedData,
-        timestamp: Date.now(),
-        version: '1.0'
-      };
-    } catch (error) {
-      console.error('创建加密载荷失败:', error);
-      // 如果加密失败，返回原始数据
-      return data;
-    }
+    const encryptedData = this.encrypt(data);
+    return {
+      encrypted_data: encryptedData,
+      timestamp: Date.now(),
+      version: '1.0'
+    };
   }
 }
