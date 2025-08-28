@@ -65,3 +65,5 @@ export class SimpleEncryption {
     return signature === expectedSignature;
   }
 }
+
+

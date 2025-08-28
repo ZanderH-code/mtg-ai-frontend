@@ -25,8 +25,14 @@ export class SimpleEncryption {
       const jsonStr = JSON.stringify(data, null, 0);
       // XOR加密
       const encrypted = this.xorEncrypt(jsonStr, this.SECRET_KEY);
-      // Base64编码 - 直接使用btoa，确保数据是Latin1字符
-      return btoa(encrypted);
+      // 将字符串转换为Uint8Array，然后转换为Latin1字符串
+      const bytes = new Uint8Array(encrypted.length);
+      for (let i = 0; i < encrypted.length; i++) {
+        bytes[i] = encrypted.charCodeAt(i) & 0xFF;
+      }
+      const latin1String = String.fromCharCode.apply(null, Array.from(bytes));
+      // Base64编码
+      return btoa(latin1String);
     } catch (error) {
       console.error("加密失败:", error);
       throw error;
@@ -35,10 +41,12 @@ export class SimpleEncryption {
 
   static decrypt(encryptedData: string): any {
     try {
-      // Base64解码 - 直接使用atob
+      // Base64解码
       const decoded = atob(encryptedData);
+      // 将Latin1字符串转换回原始字符串
+      const originalString = decoded;
       // XOR解密
-      const decrypted = this.xorDecrypt(decoded, this.SECRET_KEY);
+      const decrypted = this.xorDecrypt(originalString, this.SECRET_KEY);
       // JSON解析
       return JSON.parse(decrypted);
     } catch (error) {

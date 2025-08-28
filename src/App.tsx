@@ -3,7 +3,7 @@ import { Settings, Info, Globe } from "lucide-react";
 import SearchSection from "./components/SearchSection";
 import ResultsSection from "./components/ResultsSection";
 import SettingsModal from "./components/SettingsModal";
-import WelcomeSection from "./components/WelcomeSection";
+
 import { apiService } from "./services/api";
 import { Card, ApiExample } from "./types/api";
 
@@ -156,11 +156,6 @@ function App() {
     }
   };
 
-  const handleGetStarted = () => {
-    setShowWelcome(false);
-    setShowSettings(true);
-  };
-
   const toggleLanguage = () => {
     setLanguage(language === "zh" ? "en" : "zh");
   };
@@ -230,11 +225,6 @@ function App() {
           <div className="mb-4 p-4 bg-red-900/20 border border-red-600 rounded-lg text-red-400">
             {error}
           </div>
-        )}
-
-        {/* Welcome Section */}
-        {showWelcome && !hasApiKey && (
-          <WelcomeSection language={language} onGetStarted={handleGetStarted} />
         )}
 
         {/* Search Section */}
