@@ -20,6 +20,7 @@ export interface SearchRequest {
   model?: string;
   sort?: string;
   order?: string;
+  page?: number;
 }
 
 export interface SearchResponse {

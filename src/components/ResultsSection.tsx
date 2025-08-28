@@ -10,6 +10,10 @@ interface ResultsSectionProps {
   totalCards: number;
   language: "zh" | "en";
   isLoading?: boolean;
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
+  onNextPage?: () => void;
+  onPrevPage?: () => void;
 }
 
 const ResultsSection: React.FC<ResultsSectionProps> = ({
@@ -18,6 +22,10 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
   totalCards,
   language,
   isLoading = false,
+  currentPage = 1,
+  onPageChange,
+  onNextPage,
+  onPrevPage,
 }) => {
   if (isLoading) {
     return (
@@ -75,15 +83,42 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
 
       {/* Cards Grid */}
       {cards.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {cards.map((card, index) => (
-            <CardComponent
-              key={`${card.name}-${index}`}
-              card={card}
-              language={language}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {cards.map((card, index) => (
+              <CardComponent
+                key={`${card.name}-${index}`}
+                card={card}
+                language={language}
+              />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalCards > cards.length && (
+            <div className="flex items-center justify-center space-x-4 mt-8">
+              <button
+                onClick={onPrevPage}
+                disabled={currentPage <= 1}
+                className="px-4 py-2 bg-dark-700 hover:bg-dark-600 disabled:bg-dark-800 disabled:text-dark-500 rounded-lg transition-colors"
+              >
+                {language === "zh" ? "上一页" : "Previous"}
+              </button>
+              
+              <span className="text-dark-300">
+                {language === "zh" ? "第" : "Page"} {currentPage} {language === "zh" ? "页，共" : "of"} {Math.ceil(totalCards / 30)} {language === "zh" ? "页" : "pages"}
+              </span>
+              
+              <button
+                onClick={onNextPage}
+                disabled={currentPage >= Math.ceil(totalCards / 30)}
+                className="px-4 py-2 bg-dark-700 hover:bg-dark-600 disabled:bg-dark-800 disabled:text-dark-500 rounded-lg transition-colors"
+              >
+                {language === "zh" ? "下一页" : "Next"}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         /* No Results */
         <div className="card p-12 text-center">

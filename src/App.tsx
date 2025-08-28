@@ -22,6 +22,8 @@ function App() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [scryfallQuery, setScryfallQuery] = useState("");
   const [totalCards, setTotalCards] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [cardsPerPage] = useState(30); // 每页显示30张卡牌
 
   useEffect(() => {
     loadExamples();
@@ -51,6 +53,8 @@ function App() {
     const model = apiService.getSelectedModel();
     setSelectedModel(model || "");
   };
+
+  const [allCards, setAllCards] = useState<Card[]>([]); // 存储所有卡牌数据
 
   const handleSearch = async () => {
     console.log("handleSearch called", { searchQuery, hasApiKey });
@@ -89,9 +93,10 @@ function App() {
       console.log("Request data (without API key):", requestData);
       const response = await apiService.searchCards(requestData);
 
-      setCards(response.cards);
+      setAllCards(response.cards); // 存储所有卡牌
       setScryfallQuery(response.scryfall_query || "");
-      setTotalCards(response.total_cards || response.cards.length);
+      setTotalCards(response.cards.length);
+      setCurrentPage(1); // 重置到第一页
     } catch (error: any) {
       console.error("Search error:", error);
       console.error("Error response data:", error.response?.data);
@@ -138,12 +143,39 @@ function App() {
     setSearchQuery(example);
   };
 
+  // 计算当前页显示的卡牌
+  const getCurrentPageCards = () => {
+    const startIndex = (currentPage - 1) * cardsPerPage;
+    const endIndex = startIndex + cardsPerPage;
+    return allCards.slice(startIndex, endIndex);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 1 && newPage <= Math.ceil(totalCards / cardsPerPage)) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const handleNextPage = () => {
+    const nextPage = currentPage + 1;
+    if (nextPage <= Math.ceil(totalCards / cardsPerPage)) {
+      setCurrentPage(nextPage);
+    }
+  };
+
+  const handlePrevPage = () => {
+    const prevPage = currentPage - 1;
+    if (prevPage >= 1) {
+      setCurrentPage(prevPage);
+    }
+  };
+
   // 当排序方式改变时自动搜索
   const handleSortByChange = (newSortBy: string) => {
     setSortBy(newSortBy);
     // 如果有搜索结果且API密钥已配置，则自动重新搜索
-    if (cards.length > 0 && hasApiKey && searchQuery.trim()) {
-      handleSearch();
+    if (allCards.length > 0 && hasApiKey && searchQuery.trim()) {
+      handleSearch(); // 重新搜索以应用新排序
     }
   };
 
@@ -151,8 +183,8 @@ function App() {
   const handleSortOrderChange = (newSortOrder: "asc" | "desc") => {
     setSortOrder(newSortOrder);
     // 如果有搜索结果且API密钥已配置，则自动重新搜索
-    if (cards.length > 0 && hasApiKey && searchQuery.trim()) {
-      handleSearch();
+    if (allCards.length > 0 && hasApiKey && searchQuery.trim()) {
+      handleSearch(); // 重新搜索以应用新排序
     }
   };
 
@@ -248,11 +280,15 @@ function App() {
 
         {/* Results Section */}
         <ResultsSection
-          cards={cards}
+          cards={getCurrentPageCards()}
           scryfallQuery={scryfallQuery}
           totalCards={totalCards}
           language={language}
           isLoading={isLoading}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+          onNextPage={handleNextPage}
+          onPrevPage={handlePrevPage}
         />
       </main>
 
