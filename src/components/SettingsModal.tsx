@@ -58,7 +58,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const handleValidateApiKey = async () => {
-    if (!apiKey.trim()) return;
+    if (!apiKey?.trim()) return;
 
     setIsValidating(true);
     setValidationResult(null);
@@ -89,7 +89,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   };
 
   const handleSave = () => {
-    if (apiKey.trim()) {
+    if (apiKey?.trim()) {
       localStorage.setItem("mtg_ai_api_key", apiKey);
     }
     if (selectedModel) {
@@ -149,7 +149,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
               <div className="flex gap-2">
                 <button
                   onClick={handleValidateApiKey}
-                  disabled={!apiKey.trim() || isValidating}
+                  disabled={!apiKey?.trim() || isValidating}
                   className="btn-secondary flex items-center gap-2"
                 >
                   {isValidating ? (
@@ -242,7 +242,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                     {language === "zh" ? "当前选择" : "Currently selected"}:
                   </p>
                   <p className="text-sm text-dark-300">
-                    {models.find((m) => m.id === selectedModel)?.name || selectedModel}
+                    {models.find((m) => m.id === selectedModel)?.name ||
+                      selectedModel}
                   </p>
                 </div>
               )}
@@ -324,4 +325,3 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 };
 
 export default SettingsModal;
-

@@ -43,9 +43,17 @@ function App() {
     setSelectedModel(model || "");
   };
 
-  const handleSearch = async (query: string, sortBy: string, sortOrder: string) => {
+  const handleSearch = async (
+    query: string,
+    sortBy: string,
+    sortOrder: string
+  ) => {
     if (!hasApiKey) {
-      setError(language === "zh" ? "请先在设置中配置API密钥" : "Please configure API key in settings first");
+      setError(
+        language === "zh"
+          ? "请先在设置中配置API密钥"
+          : "Please configure API key in settings first"
+      );
       setShowSettings(true);
       return;
     }
@@ -65,8 +73,11 @@ function App() {
     } catch (error: any) {
       console.error("Search error:", error);
       setError(
-        error.response?.data?.detail || error.message || 
-        (language === "zh" ? "搜索失败，请重试" : "Search failed, please try again")
+        error.response?.data?.detail ||
+          error.message ||
+          (language === "zh"
+            ? "搜索失败，请重试"
+            : "Search failed, please try again")
       );
     } finally {
       setIsLoading(false);
@@ -116,8 +127,12 @@ function App() {
               ></div>
               <span className="text-sm text-dark-300">
                 {hasApiKey
-                  ? language === "zh" ? "API已配置" : "API Configured"
-                  : language === "zh" ? "API未配置" : "API Not Configured"}
+                  ? language === "zh"
+                    ? "API已配置"
+                    : "API Configured"
+                  : language === "zh"
+                  ? "API未配置"
+                  : "API Not Configured"}
               </span>
             </div>
 
@@ -140,8 +155,6 @@ function App() {
             </button>
           </div>
         </div>
-
-
       </header>
 
       {/* Main Content */}
@@ -155,10 +168,7 @@ function App() {
 
         {/* Welcome Section */}
         {showWelcome && !hasApiKey && (
-          <WelcomeSection
-            language={language}
-            onGetStarted={handleGetStarted}
-          />
+          <WelcomeSection language={language} onGetStarted={handleGetStarted} />
         )}
 
         {/* Search Section */}

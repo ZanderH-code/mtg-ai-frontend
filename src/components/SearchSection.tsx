@@ -90,7 +90,7 @@ const SearchSection: React.FC<SearchSectionProps> = ({
           </div>
           <button
             onClick={onSearch}
-            disabled={isLoading || !searchQuery.trim() || !hasApiKey}
+                          disabled={isLoading || !searchQuery?.trim() || !hasApiKey}
             className="btn-primary flex items-center gap-2 min-w-[120px] justify-center"
           >
             {isLoading ? (
