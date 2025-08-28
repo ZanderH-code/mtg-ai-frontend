@@ -7,7 +7,6 @@ import SettingsModal from "./components/SettingsModal";
 import { apiService } from "./services/api";
 import { Card, ApiExample } from "./types/api";
 
-
 function App() {
   const [language, setLanguage] = useState<"zh" | "en">("zh");
   const [cards, setCards] = useState<Card[]>([]);
@@ -157,8 +156,6 @@ function App() {
     }
   };
 
-
-
   const toggleLanguage = () => {
     setLanguage(language === "zh" ? "en" : "zh");
   };
@@ -209,7 +206,6 @@ function App() {
                 </span>
               </div>
             )}
-
 
             <button
               onClick={() => setShowSettings(true)}

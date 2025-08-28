@@ -1,40 +1,28 @@
-// 简化的对称加密工具
+// 简化的API密钥保护工具
 export class SimpleEncryption {
-  // 简单的密钥 - 与后端保持一致
-  private static readonly SECRET_KEY = "mtg-ai-secret-key-2024";
+  // 简单的混淆密钥
+  private static readonly MASK_KEY = "mtg2024";
 
-  private static xorEncrypt(data: string, key: string): string {
-    let encrypted = "";
+  private static simpleMask(data: string, key: string): string {
+    let masked = "";
     const keyLength = key.length;
     for (let i = 0; i < data.length; i++) {
       const keyChar = key[i % keyLength];
-      encrypted += String.fromCharCode(
+      masked += String.fromCharCode(
         data.charCodeAt(i) ^ keyChar.charCodeAt(0)
       );
     }
-    return encrypted;
-  }
-
-  private static xorDecrypt(encryptedData: string, key: string): string {
-    return this.xorEncrypt(encryptedData, key);
+    return masked;
   }
 
   static encrypt(data: any): string {
     try {
-      // 转换为JSON字符串 - 与后端保持一致
+      // 转换为JSON字符串
       const jsonStr = JSON.stringify(data, null, 0);
-      // 将字符串转换为UTF-8字节数组
-      const encoder = new TextEncoder();
-      const jsonBytes = encoder.encode(jsonStr);
-      // 对字节进行XOR加密
-      const keyBytes = new TextEncoder().encode(this.SECRET_KEY);
-      const encryptedBytes = new Uint8Array(jsonBytes.length);
-      for (let i = 0; i < jsonBytes.length; i++) {
-        const keyByte = keyBytes[i % keyBytes.length];
-        encryptedBytes[i] = jsonBytes[i] ^ keyByte;
-      }
+      // 简单混淆
+      const masked = this.simpleMask(jsonStr, this.MASK_KEY);
       // Base64编码
-      return btoa(String.fromCharCode.apply(null, Array.from(encryptedBytes)));
+      return btoa(masked);
     } catch (error) {
       console.error("加密失败:", error);
       throw error;
@@ -45,23 +33,10 @@ export class SimpleEncryption {
     try {
       // Base64解码
       const decoded = atob(encryptedData);
-      // 将字符串转换为字节数组
-      const bytes = new Uint8Array(decoded.length);
-      for (let i = 0; i < decoded.length; i++) {
-        bytes[i] = decoded.charCodeAt(i);
-      }
-      // 对字节进行XOR解密
-      const keyBytes = new TextEncoder().encode(this.SECRET_KEY);
-      const decryptedBytes = new Uint8Array(bytes.length);
-      for (let i = 0; i < bytes.length; i++) {
-        const keyByte = keyBytes[i % keyBytes.length];
-        decryptedBytes[i] = bytes[i] ^ keyByte;
-      }
-      // 将字节转换回UTF-8字符串
-      const decoder = new TextDecoder();
-      const decryptedStr = decoder.decode(decryptedBytes);
+      // 简单解混淆
+      const unmasked = this.simpleMask(decoded, this.MASK_KEY);
       // JSON解析
-      return JSON.parse(decryptedStr);
+      return JSON.parse(unmasked);
     } catch (error) {
       console.error("解密失败:", error);
       throw error;
