@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { X, Key, Check, AlertCircle } from "lucide-react";
+import { X, Key, Check, AlertCircle, Settings } from "lucide-react";
 import { apiService } from "../services/api";
 import { ApiModel } from "../types/api";
 
@@ -23,6 +23,7 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
   } | null>(null);
   const [models, setModels] = useState<ApiModel[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
+  const [selectedModel, setSelectedModel] = useState<string>("");
 
   useEffect(() => {
     if (isOpen) {
@@ -32,6 +33,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
       if (savedApiKey) {
         setApiKey(savedApiKey);
       }
+      // Load saved model from localStorage
+      const savedModel = localStorage.getItem("mtg_ai_selected_model");
+      if (savedModel) {
+        setSelectedModel(savedModel);
+      }
     }
   }, [isOpen]);
 
@@ -40,6 +46,10 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     try {
       const modelsData = await apiService.getModels();
       setModels(modelsData);
+      // If no model is selected, select the first one
+      if (!selectedModel && modelsData.length > 0) {
+        setSelectedModel(modelsData[0].id);
+      }
     } catch (error) {
       console.error("Failed to load models:", error);
     } finally {
@@ -73,9 +83,17 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     }
   };
 
+  const handleModelChange = (modelId: string) => {
+    setSelectedModel(modelId);
+    localStorage.setItem("mtg_ai_selected_model", modelId);
+  };
+
   const handleSave = () => {
     if (apiKey.trim()) {
       localStorage.setItem("mtg_ai_api_key", apiKey);
+    }
+    if (selectedModel) {
+      localStorage.setItem("mtg_ai_selected_model", selectedModel);
     }
     onClose();
   };
@@ -84,6 +102,8 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
     setApiKey("");
     setValidationResult(null);
     localStorage.removeItem("mtg_ai_api_key");
+    localStorage.removeItem("mtg_ai_selected_model");
+    setSelectedModel("");
   };
 
   if (!isOpen) return null;
@@ -180,6 +200,55 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
             </div>
           </div>
 
+          {/* Model Selection */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              {language === "zh" ? "AI 模型选择" : "AI Model Selection"}
+            </h3>
+
+            <div className="space-y-3">
+              <select
+                value={selectedModel}
+                onChange={(e) => handleModelChange(e.target.value)}
+                className="input-field"
+                disabled={modelsLoading}
+              >
+                {modelsLoading ? (
+                  <option value="">
+                    {language === "zh" ? "加载中..." : "Loading..."}
+                  </option>
+                ) : models.length > 0 ? (
+                  <>
+                    <option value="">
+                      {language === "zh" ? "选择模型" : "Select a model"}
+                    </option>
+                    {models.map((model) => (
+                      <option key={model.id} value={model.id}>
+                        {model.name} ({model.provider})
+                      </option>
+                    ))}
+                  </>
+                ) : (
+                  <option value="">
+                    {language === "zh" ? "暂无可用模型" : "No models available"}
+                  </option>
+                )}
+              </select>
+
+              {selectedModel && (
+                <div className="p-3 bg-dark-700 border border-dark-600 rounded-lg">
+                  <p className="text-sm text-white font-medium">
+                    {language === "zh" ? "当前选择" : "Currently selected"}:
+                  </p>
+                  <p className="text-sm text-dark-300">
+                    {models.find((m) => m.id === selectedModel)?.name || selectedModel}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Available Models */}
           <div>
             <h3 className="text-lg font-semibold text-white mb-3">
@@ -197,7 +266,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                 {models.map((model, index) => (
                   <div
                     key={index}
-                    className="bg-dark-700 border border-dark-600 rounded-lg p-3"
+                    className={`bg-dark-700 border rounded-lg p-3 ${
+                      model.id === selectedModel
+                        ? "border-primary-500 bg-primary-500/10"
+                        : "border-dark-600"
+                    }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-medium text-white">
@@ -208,6 +281,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
                       </span>
                     </div>
                     <p className="text-sm text-dark-300">ID: {model.id}</p>
+                    {model.id === selectedModel && (
+                      <p className="text-xs text-primary-400 mt-1">
+                        {language === "zh" ? "✓ 已选择" : "✓ Selected"}
+                      </p>
+                    )}
                   </div>
                 ))}
               </div>
@@ -221,12 +299,12 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
           {/* Info */}
           <div className="bg-dark-700 border border-dark-600 rounded-lg p-4">
             <h4 className="font-medium text-white mb-2">
-              {language === "zh" ? "关于 API 密钥" : "About API Keys"}
+              {language === "zh" ? "关于设置" : "About Settings"}
             </h4>
             <p className="text-sm text-dark-300 leading-relaxed">
               {language === "zh"
-                ? "您需要提供有效的 AI API 密钥才能使用此服务。支持的提供商包括 OpenAI、AIHubMix 等。密钥仅存储在您的浏览器本地，不会发送到我们的服务器。"
-                : "You need to provide a valid AI API key to use this service. Supported providers include OpenAI, AIHubMix, and others. Keys are only stored locally in your browser and are not sent to our servers."}
+                ? "您可以配置API密钥和选择AI模型。不同的模型可能有不同的性能和响应速度。设置会保存在您的浏览器本地。"
+                : "You can configure your API key and select an AI model. Different models may have varying performance and response speeds. Settings are saved locally in your browser."}
             </p>
           </div>
         </div>
@@ -246,3 +324,4 @@ const SettingsModal: React.FC<SettingsModalProps> = ({
 };
 
 export default SettingsModal;
+

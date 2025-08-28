@@ -7,4 +7,3 @@ services:
     envVars:
       - key: VITE_API_URL
         value: https://mtg-ai-backend.onrender.com
-

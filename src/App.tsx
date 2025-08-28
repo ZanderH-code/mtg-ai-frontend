@@ -1,37 +1,28 @@
 import React, { useState, useEffect } from "react";
-import { Search, Settings, Globe, Zap, Info, AlertCircle } from "lucide-react";
+import { Settings, Info, Globe } from "lucide-react";
 import SearchSection from "./components/SearchSection";
 import ResultsSection from "./components/ResultsSection";
 import SettingsModal from "./components/SettingsModal";
 import WelcomeSection from "./components/WelcomeSection";
-import { Card, ApiExample } from "./types/api";
 import { apiService } from "./services/api";
+import { Card, ApiExample } from "./types/api";
 
 function App() {
-  const [searchQuery, setSearchQuery] = useState("");
   const [language, setLanguage] = useState<"zh" | "en">("zh");
+  const [cards, setCards] = useState<Card[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [searchResults, setSearchResults] = useState<Card[]>([]);
-  const [scryfallQuery, setScryfallQuery] = useState("");
-  const [totalCards, setTotalCards] = useState(0);
-  const [apiProvider, setApiProvider] = useState<string>("");
   const [showSettings, setShowSettings] = useState(false);
   const [examples, setExamples] = useState<ApiExample>({ zh: [], en: [] });
-  const [sortBy, setSortBy] = useState("name");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [error, setError] = useState<string>("");
   const [hasApiKey, setHasApiKey] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
+  const [selectedModel, setSelectedModel] = useState<string>("");
 
   useEffect(() => {
     loadExamples();
     checkApiKey();
+    checkSelectedModel();
   }, []);
-
-  const checkApiKey = () => {
-    const hasKey = apiService.hasApiKey();
-    setHasApiKey(hasKey);
-  };
 
   const loadExamples = async () => {
     try {
@@ -42,61 +33,50 @@ function App() {
     }
   };
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+  const checkApiKey = () => {
+    const hasKey = apiService.hasApiKey();
+    setHasApiKey(hasKey);
+  };
 
+  const checkSelectedModel = () => {
+    const model = apiService.getSelectedModel();
+    setSelectedModel(model || "");
+  };
+
+  const handleSearch = async (query: string, sortBy: string, sortOrder: string) => {
     if (!hasApiKey) {
-      setError(
-        language === "zh"
-          ? "请先在设置中配置API密钥"
-          : "Please configure API key in settings first"
-      );
+      setError(language === "zh" ? "请先在设置中配置API密钥" : "Please configure API key in settings first");
       setShowSettings(true);
       return;
     }
 
     setIsLoading(true);
     setError("");
+
     try {
       const response = await apiService.searchCards({
-        query: searchQuery,
+        query,
         language,
         sort: sortBy,
         order: sortOrder,
       });
 
-      setSearchResults(response.cards);
-      setScryfallQuery(response.scryfall_query);
-      setTotalCards(response.total_cards);
-      setApiProvider(response.api_provider || "");
+      setCards(response.cards);
     } catch (error: any) {
-      console.error("Search failed:", error);
-      const errorMessage =
-        error.response?.data?.detail ||
-        error.message ||
-        (language === "zh"
-          ? "搜索失败，请稍后重试"
-          : "Search failed, please try again later");
-      setError(errorMessage);
-      setSearchResults([]);
+      console.error("Search error:", error);
+      setError(
+        error.response?.data?.detail || error.message || 
+        (language === "zh" ? "搜索失败，请重试" : "Search failed, please try again")
+      );
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleExampleClick = (example: string) => {
-    setSearchQuery(example);
-  };
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && !isLoading) {
-      handleSearch();
-    }
-  };
-
   const handleSettingsClose = () => {
     setShowSettings(false);
-    checkApiKey(); // 重新检查API密钥状态
+    checkApiKey();
+    checkSelectedModel();
   };
 
   const handleGetStarted = () => {
@@ -104,164 +84,108 @@ function App() {
     setShowSettings(true);
   };
 
+  const toggleLanguage = () => {
+    setLanguage(language === "zh" ? "en" : "zh");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 text-white">
+    <div className="min-h-screen bg-dark-900 text-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-primary-600 to-primary-800 shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <div className="bg-white/20 p-2 rounded-lg">
-                <Zap className="h-8 w-8 text-white" />
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-white">
-                  {language === "zh" ? "MTG AI 搜索工具" : "MTG AI Search Tool"}
-                </h1>
-                <p className="text-primary-100 text-sm">
-                  {language === "zh"
-                    ? "使用自然语言搜索万智牌卡牌"
-                    : "Search Magic: The Gathering cards using natural language"}
-                </p>
-              </div>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              {/* API Key Status */}
-              <div className="flex items-center space-x-2">
-                <div
-                  className={`w-2 h-2 rounded-full ${
-                    hasApiKey ? "bg-green-400" : "bg-red-400"
-                  }`}
-                ></div>
-                <span className="text-xs text-white/80">
-                  {hasApiKey
-                    ? language === "zh"
-                      ? "API已配置"
-                      : "API Configured"
-                    : language === "zh"
-                    ? "需要API密钥"
-                    : "API Key Required"}
-                </span>
-              </div>
-
-              {/* Language Toggle */}
-              <div className="flex bg-white/10 rounded-lg p-1">
-                <button
-                  onClick={() => setLanguage("zh")}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                    language === "zh"
-                      ? "bg-white text-primary-600"
-                      : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Globe className="h-4 w-4 inline mr-1" />
-                  中文
-                </button>
-                <button
-                  onClick={() => setLanguage("en")}
-                  className={`px-3 py-1 rounded-md text-sm font-medium transition-colors ${
-                    language === "en"
-                      ? "bg-white text-primary-600"
-                      : "text-white hover:bg-white/10"
-                  }`}
-                >
-                  <Globe className="h-4 w-4 inline mr-1" />
-                  English
-                </button>
-              </div>
-
-              {/* Settings Button */}
-              <button
-                onClick={() => setShowSettings(true)}
-                className="bg-white/10 hover:bg-white/20 p-2 rounded-lg transition-colors"
-                title={language === "zh" ? "设置" : "Settings"}
-              >
-                <Settings className="h-5 w-5 text-white" />
-              </button>
-            </div>
+      <header className="bg-dark-800 border-b border-dark-600 p-4">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold text-primary-500">
+              MTG AI Search
+            </h1>
+            <button
+              onClick={toggleLanguage}
+              className="flex items-center gap-2 px-3 py-1 rounded-lg bg-dark-700 hover:bg-dark-600 transition-colors"
+            >
+              <Globe className="h-4 w-4" />
+              {language === "zh" ? "EN" : "中文"}
+            </button>
           </div>
 
-          {/* API Status */}
-          {apiProvider && (
-            <div className="mt-4 flex items-center justify-center">
-              <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-white/20 text-white">
-                <Info className="h-3 w-3 mr-1" />
-                {language === "zh" ? "API 提供商" : "API Provider"}:{" "}
-                {apiProvider}
+          <div className="flex items-center space-x-4">
+            {/* API Key Status */}
+            <div className="flex items-center space-x-2">
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  hasApiKey ? "bg-green-500" : "bg-red-500"
+                }`}
+              ></div>
+              <span className="text-sm text-dark-300">
+                {hasApiKey
+                  ? language === "zh" ? "API已配置" : "API Configured"
+                  : language === "zh" ? "API未配置" : "API Not Configured"}
               </span>
             </div>
-          )}
-        </div>
-      </header>
 
-      {/* Error Message */}
-      {error && (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="bg-red-900/20 border border-red-600 rounded-lg p-4 flex items-center gap-3">
-            <AlertCircle className="h-5 w-5 text-red-400 flex-shrink-0" />
-            <span className="text-red-300">{error}</span>
+            {/* Selected Model */}
+            {selectedModel && (
+              <div className="flex items-center space-x-2">
+                <Info className="h-4 w-4 text-dark-400" />
+                <span className="text-sm text-dark-300">
+                  {language === "zh" ? "模型" : "Model"}: {selectedModel}
+                </span>
+              </div>
+            )}
+
             <button
-              onClick={() => setError("")}
-              className="ml-auto text-red-400 hover:text-red-300"
+              onClick={() => setShowSettings(true)}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 transition-colors"
             >
-              ×
+              <Settings className="h-4 w-4" />
+              {language === "zh" ? "设置" : "Settings"}
             </button>
           </div>
         </div>
-      )}
+
+
+      </header>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="space-y-8">
-          {/* Welcome Section */}
-          {showWelcome && !hasApiKey && (
-            <WelcomeSection
-              language={language}
-              onGetStarted={handleGetStarted}
-            />
-          )}
+      <main className="max-w-6xl mx-auto p-4">
+        {/* Global Error Message */}
+        {error && (
+          <div className="mb-4 p-4 bg-red-900/20 border border-red-600 rounded-lg text-red-400">
+            {error}
+          </div>
+        )}
 
-          {/* Search Section */}
-          {(!showWelcome || hasApiKey) && (
-            <SearchSection
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              onSearch={handleSearch}
-              onKeyPress={handleKeyPress}
-              isLoading={isLoading}
-              language={language}
-              examples={examples}
-              onExampleClick={handleExampleClick}
-              sortBy={sortBy}
-              setSortBy={setSortBy}
-              sortOrder={sortOrder}
-              setSortOrder={setSortOrder}
-              hasApiKey={hasApiKey}
-            />
-          )}
+        {/* Welcome Section */}
+        {showWelcome && !hasApiKey && (
+          <WelcomeSection
+            language={language}
+            onGetStarted={handleGetStarted}
+          />
+        )}
 
-          {/* Results Section */}
-          {(searchResults.length > 0 || isLoading) && (
-            <ResultsSection
-              cards={searchResults}
-              scryfallQuery={scryfallQuery}
-              totalCards={totalCards}
-              language={language}
-              isLoading={isLoading}
-            />
-          )}
-        </div>
+        {/* Search Section */}
+        {(showWelcome === false || hasApiKey) && (
+          <SearchSection
+            language={language}
+            examples={examples}
+            onSearch={handleSearch}
+            isLoading={isLoading}
+            hasApiKey={hasApiKey}
+          />
+        )}
+
+        {/* Results Section */}
+        <ResultsSection
+          cards={cards}
+          language={language}
+          isLoading={isLoading}
+        />
       </main>
 
       {/* Settings Modal */}
-      {showSettings && (
-        <SettingsModal
-          isOpen={showSettings}
-          onClose={handleSettingsClose}
-          language={language}
-        />
-      )}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={handleSettingsClose}
+        language={language}
+      />
     </div>
   );
 }

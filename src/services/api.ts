@@ -24,14 +24,21 @@ const getStoredApiKey = (): string | null => {
   return localStorage.getItem("mtg_ai_api_key");
 };
 
+// 获取存储的模型ID
+const getStoredModel = (): string | null => {
+  return localStorage.getItem("mtg_ai_selected_model");
+};
+
 export const apiService = {
   // Search for cards
   async searchCards(request: SearchRequest): Promise<SearchResponse> {
-    // 自动添加API密钥
+    // 自动添加API密钥和模型
     const apiKey = getStoredApiKey();
+    const model = getStoredModel();
     const requestWithKey = {
       ...request,
       api_key: apiKey || undefined,
+      model: model || undefined,
     };
 
     const response = await api.post<SearchResponse>(
@@ -72,6 +79,11 @@ export const apiService = {
   // 获取API密钥
   getApiKey(): string | null {
     return getStoredApiKey();
+  },
+
+  // 获取当前选择的模型
+  getSelectedModel(): string | null {
+    return getStoredModel();
   },
 
   // 获取当前API地址
