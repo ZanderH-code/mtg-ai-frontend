@@ -23,8 +23,8 @@ export class SimpleEncryption {
       const jsonStr = JSON.stringify(data);
       // XOR加密
       const encrypted = this.xorEncrypt(jsonStr, this.SECRET_KEY);
-      // Base64编码
-      return btoa(encrypted);
+      // Base64编码 - 处理Unicode字符
+      return btoa(unescape(encodeURIComponent(encrypted)));
     } catch (error) {
       console.error('加密失败:', error);
       throw error;
@@ -33,8 +33,8 @@ export class SimpleEncryption {
 
   static decrypt(encryptedData: string): any {
     try {
-      // Base64解码
-      const decoded = atob(encryptedData);
+      // Base64解码 - 处理Unicode字符
+      const decoded = decodeURIComponent(escape(atob(encryptedData)));
       // XOR解密
       const decrypted = this.xorDecrypt(decoded, this.SECRET_KEY);
       // JSON解析
