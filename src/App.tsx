@@ -54,7 +54,7 @@ function App() {
 
   const handleSearch = async () => {
     console.log("handleSearch called", { searchQuery, hasApiKey });
-    
+
     if (!hasApiKey) {
       setError(
         language === "zh"
@@ -67,9 +67,7 @@ function App() {
 
     if (!searchQuery?.trim()) {
       setError(
-        language === "zh"
-          ? "请输入搜索内容"
-          : "Please enter search content"
+        language === "zh" ? "请输入搜索内容" : "Please enter search content"
       );
       return;
     }
@@ -78,6 +76,10 @@ function App() {
     setError("");
 
     try {
+      console.log("Sending search request with sort params:", {
+        sortBy,
+        sortOrder,
+      });
       const response = await apiService.searchCards({
         query: searchQuery,
         language,
@@ -116,6 +118,24 @@ function App() {
 
   const handleExampleClick = (example: string) => {
     setSearchQuery(example);
+  };
+
+  // 当排序方式改变时自动搜索
+  const handleSortByChange = (newSortBy: string) => {
+    setSortBy(newSortBy);
+    // 如果有搜索结果且API密钥已配置，则自动重新搜索
+    if (cards.length > 0 && hasApiKey && searchQuery.trim()) {
+      handleSearch();
+    }
+  };
+
+  // 当排序顺序改变时自动搜索
+  const handleSortOrderChange = (newSortOrder: "asc" | "desc") => {
+    setSortOrder(newSortOrder);
+    // 如果有搜索结果且API密钥已配置，则自动重新搜索
+    if (cards.length > 0 && hasApiKey && searchQuery.trim()) {
+      handleSearch();
+    }
   };
 
   const handleGetStarted = () => {
@@ -211,9 +231,9 @@ function App() {
             examples={examples}
             onExampleClick={handleExampleClick}
             sortBy={sortBy}
-            setSortBy={setSortBy}
+            setSortBy={handleSortByChange}
             sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
+            setSortOrder={handleSortOrderChange}
             hasApiKey={hasApiKey}
           />
         )}
