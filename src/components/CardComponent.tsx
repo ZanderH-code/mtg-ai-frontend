@@ -59,7 +59,12 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, language }) => {
   };
 
   return (
-    <div className="card group">
+    <a
+      href={card.scryfall_uri}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="card group block hover:scale-105 transition-transform duration-300 cursor-pointer"
+    >
       {/* Card Image */}
       <div className="relative aspect-[745/1040] bg-dark-700 overflow-hidden">
         {imageLoading && (
@@ -94,7 +99,7 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, language }) => {
       <div className="p-4 space-y-3">
         {/* Card Name and Mana Cost */}
         <div className="flex items-start justify-between gap-2">
-          <h3 className="font-bold text-white text-lg leading-tight flex-1">
+          <h3 className="font-bold text-white text-lg leading-tight flex-1 group-hover:text-primary-400 transition-colors">
             {card.name}
           </h3>
           {card.mana_cost && (
@@ -130,19 +135,8 @@ const CardComponent: React.FC<CardComponentProps> = ({ card, language }) => {
             ))}
           </div>
         )}
-
-        {/* External Link */}
-        <a
-          href={card.scryfall_uri}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-primary-400 hover:text-primary-300 text-sm transition-colors"
-        >
-          <ExternalLink className="h-3 w-3" />
-          {language === "zh" ? "在 Scryfall 中查看" : "View on Scryfall"}
-        </a>
       </div>
-    </div>
+    </a>
   );
 };
 
