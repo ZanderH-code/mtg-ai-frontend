@@ -8,9 +8,7 @@ export class SimpleEncryption {
     const keyLength = key.length;
     for (let i = 0; i < data.length; i++) {
       const keyChar = key[i % keyLength];
-      masked += String.fromCharCode(
-        data.charCodeAt(i) ^ keyChar.charCodeAt(0)
-      );
+      masked += String.fromCharCode(data.charCodeAt(i) ^ keyChar.charCodeAt(0));
     }
     return masked;
   }
