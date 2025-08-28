@@ -17,6 +17,9 @@ function App() {
   const [hasApiKey, setHasApiKey] = useState(false);
   const [showWelcome, setShowWelcome] = useState(true);
   const [selectedModel, setSelectedModel] = useState<string>("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("name");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     loadExamples();
@@ -43,11 +46,8 @@ function App() {
     setSelectedModel(model || "");
   };
 
-  const handleSearch = async (
-    query: string,
-    sortBy: string,
-    sortOrder: string
-  ) => {
+  const handleSearch = async () => {
+    const query = searchQuery;
     if (!hasApiKey) {
       setError(
         language === "zh"
@@ -88,6 +88,16 @@ function App() {
     setShowSettings(false);
     checkApiKey();
     checkSelectedModel();
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && hasApiKey) {
+      handleSearch();
+    }
+  };
+
+  const handleExampleClick = (example: string) => {
+    setSearchQuery(example);
   };
 
   const handleGetStarted = () => {
@@ -174,10 +184,18 @@ function App() {
         {/* Search Section */}
         {(showWelcome === false || hasApiKey) && (
           <SearchSection
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            onSearch={handleSearch}
+            onKeyPress={handleKeyPress}
+            isLoading={isLoading}
             language={language}
             examples={examples}
-            onSearch={handleSearch}
-            isLoading={isLoading}
+            onExampleClick={handleExampleClick}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
             hasApiKey={hasApiKey}
           />
         )}
