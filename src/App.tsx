@@ -20,6 +20,8 @@ function App() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [scryfallQuery, setScryfallQuery] = useState("");
+  const [totalCards, setTotalCards] = useState(0);
 
   useEffect(() => {
     loadExamples();
@@ -70,6 +72,8 @@ function App() {
       });
 
       setCards(response.cards);
+      setScryfallQuery(response.scryfall_query || "");
+      setTotalCards(response.total_cards || response.cards.length);
     } catch (error: any) {
       console.error("Search error:", error);
       setError(
@@ -203,6 +207,8 @@ function App() {
         {/* Results Section */}
         <ResultsSection
           cards={cards}
+          scryfallQuery={scryfallQuery}
+          totalCards={totalCards}
           language={language}
           isLoading={isLoading}
         />
