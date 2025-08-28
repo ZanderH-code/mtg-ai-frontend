@@ -6,6 +6,7 @@ import SettingsModal from "./components/SettingsModal";
 
 import { apiService } from "./services/api";
 import { Card, ApiExample } from "./types/api";
+import { SimpleEncryption } from "./utils/simpleEncryption";
 
 function App() {
   const [language, setLanguage] = useState<"zh" | "en">("zh");
@@ -156,6 +157,72 @@ function App() {
     }
   };
 
+  const testEncryption = async () => {
+    console.log("=== 测试加密功能 ===");
+
+    const testData = {
+      query: "蓝色瞬间法术",
+      language: "zh",
+      api_key: "test_key_123",
+    };
+
+    try {
+      console.log("原始数据:", testData);
+
+      // 加密
+      const encryptedData = SimpleEncryption.encrypt(testData);
+      console.log("加密结果:", encryptedData);
+      console.log("加密数据长度:", encryptedData.length);
+
+      // 检查是否已加密
+      const isEncrypted = SimpleEncryption.isEncrypted({
+        encrypted_data: encryptedData,
+      });
+      console.log("是否已加密:", isEncrypted);
+
+      // 解密
+      const decryptedData = SimpleEncryption.decrypt(encryptedData);
+      console.log("解密结果:", decryptedData);
+
+      // 验证结果
+      if (JSON.stringify(decryptedData) === JSON.stringify(testData)) {
+        console.log("✅ 加密解密测试成功！");
+        alert("加密解密测试成功！");
+      } else {
+        console.log("❌ 加密解密测试失败！");
+        alert("加密解密测试失败！");
+      }
+
+      // 测试发送到后端
+      const encryptedPayload =
+        SimpleEncryption.createEncryptedPayload(testData);
+      console.log("发送到后端的加密载荷:", encryptedPayload);
+
+      try {
+        const response = await fetch(
+          "https://mtg-ai-backend.onrender.com/api/debug-encryption",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(encryptedPayload),
+          }
+        );
+
+        const result = await response.json();
+        console.log("后端响应:", result);
+        alert(`后端响应: ${JSON.stringify(result, null, 2)}`);
+      } catch (fetchError) {
+        console.error("发送到后端失败:", fetchError);
+        alert(`发送到后端失败: ${fetchError}`);
+      }
+    } catch (error) {
+      console.error("加密测试失败:", error);
+      alert(`加密测试失败: ${error}`);
+    }
+  };
+
   const toggleLanguage = () => {
     setLanguage(language === "zh" ? "en" : "zh");
   };
@@ -207,6 +274,12 @@ function App() {
               </div>
             )}
 
+            <button
+              onClick={testEncryption}
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-yellow-600 hover:bg-yellow-700 transition-colors mr-2"
+            >
+              🔐 测试加密
+            </button>
             <button
               onClick={() => setShowSettings(true)}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 transition-colors"

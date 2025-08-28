@@ -23,16 +23,18 @@ export class SimpleEncryption {
     try {
       // 转换为JSON字符串 - 与后端保持一致
       const jsonStr = JSON.stringify(data, null, 0);
-      // XOR加密
-      const encrypted = this.xorEncrypt(jsonStr, this.SECRET_KEY);
-      // 将字符串转换为Uint8Array，然后转换为Latin1字符串
-      const bytes = new Uint8Array(encrypted.length);
-      for (let i = 0; i < encrypted.length; i++) {
-        bytes[i] = encrypted.charCodeAt(i) & 0xFF;
+      // 将字符串转换为UTF-8字节数组
+      const encoder = new TextEncoder();
+      const jsonBytes = encoder.encode(jsonStr);
+      // 对字节进行XOR加密
+      const keyBytes = new TextEncoder().encode(this.SECRET_KEY);
+      const encryptedBytes = new Uint8Array(jsonBytes.length);
+      for (let i = 0; i < jsonBytes.length; i++) {
+        const keyByte = keyBytes[i % keyBytes.length];
+        encryptedBytes[i] = jsonBytes[i] ^ keyByte;
       }
-      const latin1String = String.fromCharCode.apply(null, Array.from(bytes));
       // Base64编码
-      return btoa(latin1String);
+      return btoa(String.fromCharCode.apply(null, Array.from(encryptedBytes)));
     } catch (error) {
       console.error("加密失败:", error);
       throw error;
@@ -43,12 +45,23 @@ export class SimpleEncryption {
     try {
       // Base64解码
       const decoded = atob(encryptedData);
-      // 将Latin1字符串转换回原始字符串
-      const originalString = decoded;
-      // XOR解密
-      const decrypted = this.xorDecrypt(originalString, this.SECRET_KEY);
+      // 将字符串转换为字节数组
+      const bytes = new Uint8Array(decoded.length);
+      for (let i = 0; i < decoded.length; i++) {
+        bytes[i] = decoded.charCodeAt(i);
+      }
+      // 对字节进行XOR解密
+      const keyBytes = new TextEncoder().encode(this.SECRET_KEY);
+      const decryptedBytes = new Uint8Array(bytes.length);
+      for (let i = 0; i < bytes.length; i++) {
+        const keyByte = keyBytes[i % keyBytes.length];
+        decryptedBytes[i] = bytes[i] ^ keyByte;
+      }
+      // 将字节转换回UTF-8字符串
+      const decoder = new TextDecoder();
+      const decryptedStr = decoder.decode(decryptedBytes);
       // JSON解析
-      return JSON.parse(decrypted);
+      return JSON.parse(decryptedStr);
     } catch (error) {
       console.error("解密失败:", error);
       throw error;
