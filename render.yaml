@@ -2,7 +2,7 @@ services:
   - type: web
     name: mtg-ai-frontend
     env: static
-    buildCommand: npm install && npm run build
+    buildCommand: yarn install && yarn build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
