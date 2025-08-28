@@ -49,10 +49,8 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
             {language === "zh" ? "搜索结果" : "Search Results"}
           </h2>
           <span className="text-dark-300">
-            {language === "zh" ? "找到" : "Found"} {cards.length}{" "}
+            {language === "zh" ? "找到" : "Found"} {totalCards}{" "}
             {language === "zh" ? "张卡牌" : "cards"}
-            {totalCards > cards.length &&
-              ` (${language === "zh" ? "共" : "of"} ${totalCards})`}
           </span>
         </div>
 
@@ -104,11 +102,14 @@ const ResultsSection: React.FC<ResultsSectionProps> = ({
               >
                 {language === "zh" ? "上一页" : "Previous"}
               </button>
-              
+
               <span className="text-dark-300">
-                {language === "zh" ? "第" : "Page"} {currentPage} {language === "zh" ? "页，共" : "of"} {Math.ceil(totalCards / 30)} {language === "zh" ? "页" : "pages"}
+                {language === "zh" ? "第" : "Page"} {currentPage}{" "}
+                {language === "zh" ? "页，共" : "of"}{" "}
+                {Math.ceil(totalCards / 30)}{" "}
+                {language === "zh" ? "页" : "pages"}
               </span>
-              
+
               <button
                 onClick={onNextPage}
                 disabled={currentPage >= Math.ceil(totalCards / 30)}
