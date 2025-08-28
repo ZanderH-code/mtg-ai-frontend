@@ -1,12 +1,10 @@
 services:
-  - type: static
+  - type: web
     name: mtg-ai-frontend
     env: static
-    region: singapore
-    plan: free
-    buildCommand: echo "Static site - no build needed"
-    staticPublishPath: build
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://mtg-ai-backend.onrender.com
+

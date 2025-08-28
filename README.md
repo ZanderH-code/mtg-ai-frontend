@@ -1,70 +1,135 @@
 # MTG AI Search Frontend
 
-A web application that helps users search for Magic: The Gathering cards using natural language.
+A modern React TypeScript web application that helps users search for Magic: The Gathering cards using natural language.
 
-## What it does
+## Features
 
 - **Smart Search**: Converts everyday language into card searches
 - **Two Languages**: Works in both Chinese and English
-- **Beautiful Interface**: Modern dark theme with card images
-- **Easy to Use**: Simple and intuitive design
+- **Modern UI**: Beautiful dark theme with Tailwind CSS
+- **Responsive Design**: Works on desktop and mobile devices
+- **Type Safety**: Built with TypeScript for better development experience
+- **Fast Performance**: Built with Vite for fast development and builds
 
-## Main Features
+## Technology Stack
 
-- Natural language card search
-- Chinese and English interface
-- Dark theme design
-- Language switching
-- Card image display
-- API key management
-
-## Technology
-
-- **Frontend**: HTML, CSS, JavaScript
-- **Styling**: Custom dark theme
+- **Frontend**: React 18 with TypeScript
+- **Styling**: Tailwind CSS
+- **Build Tool**: Vite
+- **Icons**: Lucide React
+- **HTTP Client**: Axios
 - **Deployment**: Render.com (Static Site)
-- **No Build Process**: Simple vanilla JavaScript
 
-## Setup
+## Getting Started
 
-### Local Development
+### Prerequisites
+
+- Node.js 16+
+- npm or yarn
+
+### Installation
 
 1. Clone the repository
-2. Serve the files using any static file server:
-
+2. Install dependencies:
    ```bash
-   # Using Python
-   python -m http.server 8000
-
-   # Using Node.js
-   npx serve build
+   npm install
    ```
 
-3. Open http://localhost:8000 in your browser
+### Development
 
-### Production
+Start the development server:
 
-Automatically deployed on Render.com when code is pushed to the main branch.
+```bash
+npm run dev
+```
 
-## How to Use
+The application will be available at `http://localhost:5173`
 
-1. **Set up API Key**: Enter your AI API key in the settings
-2. **Search for Cards**: Type what you're looking for in natural language
-3. **View Results**: Browse through the cards that match your search
-4. **Click Cards**: Click on any card to see more details
+### Building for Production
 
-## Examples
+Build the application:
 
-- "red creatures with flying"
-- "green spells that draw cards"
-- "blue white control cards"
+```bash
+npm run build
+```
 
-## Links
+Preview the production build:
 
-- **Live Application**: https://mtg-ai-frontend.onrender.com
-- **Backend API**: https://mtg-ai-backend.onrender.com
-- **Main Project**: https://github.com/ZanderH-code/MTG-AIsearch
+```bash
+npm run preview
+```
 
-## Support
+## Project Structure
 
-For questions or issues, create an issue on GitHub.
+```
+src/
+├── components/          # React components
+│   ├── SearchSection.tsx
+│   ├── ResultsSection.tsx
+│   ├── CardComponent.tsx
+│   ├── SettingsModal.tsx
+│   ├── WelcomeSection.tsx
+│   └── LoadingSpinner.tsx
+├── services/           # API services
+│   └── api.ts
+├── types/              # TypeScript type definitions
+│   └── api.ts
+├── App.tsx             # Main application component
+├── main.tsx            # Application entry point
+└── index.css           # Global styles with Tailwind
+```
+
+## API Integration
+
+The frontend communicates with the MTG AI Backend API:
+
+- **Base URL**: `https://mtg-ai-backend.onrender.com`
+- **Search Endpoint**: `/api/search`
+- **Examples Endpoint**: `/api/examples`
+- **Models Endpoint**: `/api/models`
+- **Validation Endpoint**: `/api/validate-key`
+
+## Features
+
+### Search Functionality
+
+- Natural language card search
+- Multiple sorting options (name, set, rarity, etc.)
+- Ascending/descending order
+- Search examples for both languages
+
+### Card Display
+
+- High-quality card images from Scryfall
+- Card details (name, type, text, rarity)
+- Mana cost display with symbols
+- Direct links to Scryfall
+
+### Settings
+
+- API key management
+- Key validation
+- Available models display
+- Local storage for persistence
+
+### Language Support
+
+- Chinese and English interfaces
+- Dynamic language switching
+- Localized content and examples
+
+## Deployment
+
+The application is automatically deployed on Render.com when code is pushed to the main branch.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License
+
+This project is part of the MTG AI Search tool.

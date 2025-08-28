@@ -1,0 +1,248 @@
+import React, { useState, useEffect } from "react";
+import { X, Key, Check, AlertCircle } from "lucide-react";
+import { apiService } from "../services/api";
+import { ApiModel } from "../types/api";
+
+interface SettingsModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  language: "zh" | "en";
+}
+
+const SettingsModal: React.FC<SettingsModalProps> = ({
+  isOpen,
+  onClose,
+  language,
+}) => {
+  const [apiKey, setApiKey] = useState("");
+  const [isValidating, setIsValidating] = useState(false);
+  const [validationResult, setValidationResult] = useState<{
+    valid: boolean;
+    provider?: string;
+    message?: string;
+  } | null>(null);
+  const [models, setModels] = useState<ApiModel[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      loadModels();
+      // Load saved API key from localStorage
+      const savedApiKey = localStorage.getItem("mtg_ai_api_key");
+      if (savedApiKey) {
+        setApiKey(savedApiKey);
+      }
+    }
+  }, [isOpen]);
+
+  const loadModels = async () => {
+    setModelsLoading(true);
+    try {
+      const modelsData = await apiService.getModels();
+      setModels(modelsData);
+    } catch (error) {
+      console.error("Failed to load models:", error);
+    } finally {
+      setModelsLoading(false);
+    }
+  };
+
+  const handleValidateApiKey = async () => {
+    if (!apiKey.trim()) return;
+
+    setIsValidating(true);
+    setValidationResult(null);
+
+    try {
+      const result = await apiService.validateApiKey(apiKey);
+      setValidationResult(result);
+
+      if (result.valid) {
+        localStorage.setItem("mtg_ai_api_key", apiKey);
+      }
+    } catch (error) {
+      setValidationResult({
+        valid: false,
+        message:
+          language === "zh"
+            ? "验证失败，请检查网络连接"
+            : "Validation failed, please check your connection",
+      });
+    } finally {
+      setIsValidating(false);
+    }
+  };
+
+  const handleSave = () => {
+    if (apiKey.trim()) {
+      localStorage.setItem("mtg_ai_api_key", apiKey);
+    }
+    onClose();
+  };
+
+  const handleClear = () => {
+    setApiKey("");
+    setValidationResult(null);
+    localStorage.removeItem("mtg_ai_api_key");
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-dark-800 border border-dark-600 rounded-xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between p-6 border-b border-dark-600">
+          <h2 className="text-xl font-bold text-white">
+            {language === "zh" ? "设置" : "Settings"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-dark-400 hover:text-white transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* API Key Section */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+              <Key className="h-5 w-5" />
+              {language === "zh" ? "API 密钥" : "API Key"}
+            </h3>
+
+            <div className="space-y-3">
+              <input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder={
+                  language === "zh"
+                    ? "输入您的 AI API 密钥"
+                    : "Enter your AI API key"
+                }
+                className="input-field"
+              />
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleValidateApiKey}
+                  disabled={!apiKey.trim() || isValidating}
+                  className="btn-secondary flex items-center gap-2"
+                >
+                  {isValidating ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                  ) : (
+                    <Check className="h-4 w-4" />
+                  )}
+                  {language === "zh" ? "验证" : "Validate"}
+                </button>
+
+                <button onClick={handleClear} className="btn-secondary">
+                  {language === "zh" ? "清除" : "Clear"}
+                </button>
+              </div>
+
+              {/* Validation Result */}
+              {validationResult && (
+                <div
+                  className={`p-3 rounded-lg flex items-center gap-2 ${
+                    validationResult.valid
+                      ? "bg-green-900/20 border border-green-600 text-green-400"
+                      : "bg-red-900/20 border border-red-600 text-red-400"
+                  }`}
+                >
+                  {validationResult.valid ? (
+                    <Check className="h-4 w-4" />
+                  ) : (
+                    <AlertCircle className="h-4 w-4" />
+                  )}
+                  <span className="text-sm">
+                    {validationResult.message ||
+                      (validationResult.valid
+                        ? `${
+                            language === "zh"
+                              ? "验证成功"
+                              : "Validation successful"
+                          }${
+                            validationResult.provider
+                              ? ` (${validationResult.provider})`
+                              : ""
+                          }`
+                        : `${
+                            language === "zh" ? "验证失败" : "Validation failed"
+                          }`)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Available Models */}
+          <div>
+            <h3 className="text-lg font-semibold text-white mb-3">
+              {language === "zh" ? "可用模型" : "Available Models"}
+            </h3>
+            {modelsLoading ? (
+              <div className="flex items-center justify-center py-4">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-500"></div>
+                <span className="ml-2 text-dark-300">
+                  {language === "zh" ? "加载中..." : "Loading..."}
+                </span>
+              </div>
+            ) : models.length > 0 ? (
+              <div className="space-y-2">
+                {models.map((model, index) => (
+                  <div
+                    key={index}
+                    className="bg-dark-700 border border-dark-600 rounded-lg p-3"
+                  >
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="font-medium text-white">
+                        {model.name}
+                      </span>
+                      <span className="text-xs text-dark-400 bg-dark-600 px-2 py-1 rounded">
+                        {model.provider}
+                      </span>
+                    </div>
+                    <p className="text-sm text-dark-300">ID: {model.id}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-dark-300">
+                {language === "zh" ? "暂无可用模型" : "No models available"}
+              </div>
+            )}
+          </div>
+
+          {/* Info */}
+          <div className="bg-dark-700 border border-dark-600 rounded-lg p-4">
+            <h4 className="font-medium text-white mb-2">
+              {language === "zh" ? "关于 API 密钥" : "About API Keys"}
+            </h4>
+            <p className="text-sm text-dark-300 leading-relaxed">
+              {language === "zh"
+                ? "您需要提供有效的 AI API 密钥才能使用此服务。支持的提供商包括 OpenAI、AIHubMix 等。密钥仅存储在您的浏览器本地，不会发送到我们的服务器。"
+                : "You need to provide a valid AI API key to use this service. Supported providers include OpenAI, AIHubMix, and others. Keys are only stored locally in your browser and are not sent to our servers."}
+            </p>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="flex justify-end gap-3 p-6 border-t border-dark-600">
+          <button onClick={onClose} className="btn-secondary">
+            {language === "zh" ? "取消" : "Cancel"}
+          </button>
+          <button onClick={handleSave} className="btn-primary">
+            {language === "zh" ? "保存" : "Save"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SettingsModal;
