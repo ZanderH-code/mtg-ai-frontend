@@ -97,16 +97,16 @@ function App() {
       console.error("Error response data:", error.response?.data);
       console.error("Error status:", error.response?.status);
       console.error("Error message:", error.message);
-      
+
       // 处理422验证错误
       if (error.response?.status === 422) {
         const validationErrors = error.response?.data?.detail;
         console.error("Validation errors:", validationErrors);
         setError(
           `数据验证失败: ${JSON.stringify(validationErrors)}` ||
-          (language === "zh"
-            ? "请求数据格式错误，请检查输入"
-            : "Request data format error, please check input")
+            (language === "zh"
+              ? "请求数据格式错误，请检查输入"
+              : "Request data format error, please check input")
         );
       } else {
         setError(

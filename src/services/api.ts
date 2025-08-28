@@ -21,36 +21,37 @@ const api = axios.create({
   },
 });
 
+// 暂时禁用加密拦截器 - 有问题
 // 请求拦截器 - 加密请求数据
-api.interceptors.request.use((config) => {
-  if (config.data) {
-    const timestamp = Date.now();
-    const encryptedData = SimpleEncryption.encrypt(config.data);
-    const signature = SimpleEncryption.generateSignature(
-      config.data,
-      timestamp
-    );
+// api.interceptors.request.use((config) => {
+//   if (config.data) {
+//     const timestamp = Date.now();
+//     const encryptedData = SimpleEncryption.encrypt(config.data);
+//     const signature = SimpleEncryption.generateSignature(
+//       config.data,
+//       timestamp
+//     );
 
-    config.data = {
-      encrypted_data: encryptedData,
-      timestamp: timestamp,
-      signature: signature,
-    };
-  }
-  return config;
-});
+//     config.data = {
+//       encrypted_data: encryptedData,
+//       timestamp: timestamp,
+//       signature: signature,
+//     };
+//   }
+//   return config;
+// });
 
 // 响应拦截器 - 解密响应数据
-api.interceptors.response.use((response) => {
-  if (response.data && response.data.encrypted_data) {
-    try {
-      response.data = SimpleEncryption.decrypt(response.data.encrypted_data);
-    } catch (error) {
-      console.error("Failed to decrypt response:", error);
-    }
-  }
-  return response;
-});
+// api.interceptors.response.use((response) => {
+//   if (response.data && response.data.encrypted_data) {
+//     try {
+//       response.data = SimpleEncryption.decrypt(response.data.encrypted_data);
+//     } catch (error) {
+//       console.error("Failed to decrypt response:", error);
+//     }
+//   }
+//   return response;
+// });
 
 // 获取存储的API密钥
 const getStoredApiKey = (): string | null => {
