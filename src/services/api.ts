@@ -7,7 +7,7 @@ import {
   ApiModelsResponse,
   ApiValidationResponse,
 } from "../types/api";
-import { SimpleEncryption } from "../utils/encryption";
+import { SimpleEncryption } from "../utils/simpleEncryption";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://mtg-ai-backend.onrender.com";
@@ -21,37 +21,37 @@ const api = axios.create({
   },
 });
 
-// 暂时禁用加密拦截器 - 有问题
+// 启用简化的加密拦截器
 // 请求拦截器 - 加密请求数据
-// api.interceptors.request.use((config) => {
-//   if (config.data) {
-//     const timestamp = Date.now();
-//     const encryptedData = SimpleEncryption.encrypt(config.data);
-//     const signature = SimpleEncryption.generateSignature(
-//       config.data,
-//       timestamp
-//     );
-
-//     config.data = {
-//       encrypted_data: encryptedData,
-//       timestamp: timestamp,
-//       signature: signature,
-//     };
-//   }
-//   return config;
-// });
+api.interceptors.request.use((config) => {
+  if (config.data) {
+    try {
+      console.log("🔐 开始加密请求数据...");
+      const encryptedPayload = SimpleEncryption.createEncryptedPayload(config.data);
+      config.data = encryptedPayload;
+      console.log("✅ 请求数据加密完成");
+    } catch (error) {
+      console.error("❌ 请求加密失败:", error);
+      // 加密失败时，使用原始数据
+    }
+  }
+  return config;
+});
 
 // 响应拦截器 - 解密响应数据
-// api.interceptors.response.use((response) => {
-//   if (response.data && response.data.encrypted_data) {
-//     try {
-//       response.data = SimpleEncryption.decrypt(response.data.encrypted_data);
-//     } catch (error) {
-//       console.error("Failed to decrypt response:", error);
-//     }
-//   }
-//   return response;
-// });
+api.interceptors.response.use((response) => {
+  if (response.data && SimpleEncryption.isEncrypted(response.data)) {
+    try {
+      console.log("🔓 开始解密响应数据...");
+      response.data = SimpleEncryption.decrypt(response.data.encrypted_data);
+      console.log("✅ 响应数据解密完成");
+    } catch (error) {
+      console.error("❌ 响应解密失败:", error);
+      // 解密失败时，保持原始数据
+    }
+  }
+  return response;
+});
 
 // 获取存储的API密钥
 const getStoredApiKey = (): string | null => {
