@@ -80,25 +80,43 @@ function App() {
         sortBy,
         sortOrder,
       });
-      const response = await apiService.searchCards({
+      const requestData = {
         query: searchQuery,
         language,
         sort: sortBy,
         order: sortOrder,
-      });
+      };
+      console.log("Full request data:", requestData);
+      const response = await apiService.searchCards(requestData);
 
       setCards(response.cards);
       setScryfallQuery(response.scryfall_query || "");
       setTotalCards(response.total_cards || response.cards.length);
     } catch (error: any) {
       console.error("Search error:", error);
-      setError(
-        error.response?.data?.detail ||
-          error.message ||
+      console.error("Error response data:", error.response?.data);
+      console.error("Error status:", error.response?.status);
+      console.error("Error message:", error.message);
+      
+      // 处理422验证错误
+      if (error.response?.status === 422) {
+        const validationErrors = error.response?.data?.detail;
+        console.error("Validation errors:", validationErrors);
+        setError(
+          `数据验证失败: ${JSON.stringify(validationErrors)}` ||
           (language === "zh"
-            ? "搜索失败，请重试"
-            : "Search failed, please try again")
-      );
+            ? "请求数据格式错误，请检查输入"
+            : "Request data format error, please check input")
+        );
+      } else {
+        setError(
+          error.response?.data?.detail ||
+            error.message ||
+            (language === "zh"
+              ? "搜索失败，请重试"
+              : "Search failed, please try again")
+        );
+      }
     } finally {
       setIsLoading(false);
     }
